@@ -2,470 +2,1094 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Grupos de Habitaciones — Fin de Curso</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#6366f1">
+  <title>Habitaciones · Fin de Curso</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
   <style>
+    /* ════════════════════════════════════════════════════
+       DESIGN TOKENS
+       ════════════════════════════════════════════════════ */
     :root {
-      --girl: #c2185b;
-      --girl-bg: #fce4ec;
-      --girl-border: #f48fb1;
-      --boy: #1565c0;
-      --boy-bg: #e3f2fd;
-      --boy-border: #90caf9;
-      --doubt: #f59e0b;
-      --accent: #4f46e5;
+      --girl-700: #be185d;
+      --girl-600: #db2777;
+      --girl-500: #ec4899;
+      --girl-100: #fce7f3;
+      --girl-50:  #fdf2f8;
+      --girl-grad: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+
+      --boy-700: #1d4ed8;
+      --boy-600: #2563eb;
+      --boy-500: #3b82f6;
+      --boy-100: #dbeafe;
+      --boy-50:  #eff6ff;
+      --boy-grad: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+
+      --accent: #6366f1;
+      --accent-dark: #4f46e5;
+      --accent-light: #eef2ff;
+
+      --warning: #f59e0b;
+      --warning-light: #fffbeb;
+      --danger: #ef4444;
+      --success: #10b981;
+
+      --bg: #f6f7fb;
+      --surface: #ffffff;
+      --ink-900: #0f172a;
+      --ink-700: #334155;
+      --ink-500: #64748b;
+      --ink-300: #cbd5e1;
+      --ink-200: #e2e8f0;
+      --ink-100: #f1f5f9;
+
+      --radius-sm: 8px;
+      --radius:    12px;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+
+      --shadow-sm:  0 1px 2px rgba(15,23,42,.06);
+      --shadow:     0 4px 16px -2px rgba(15,23,42,.08), 0 2px 6px -1px rgba(15,23,42,.04);
+      --shadow-lg:  0 16px 40px -8px rgba(15,23,42,.18), 0 4px 12px -2px rgba(15,23,42,.08);
+
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
 
+    /* ════════════════════════════════════════════════════
+       BASE
+       ════════════════════════════════════════════════════ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: #f1f5f9;
+    html, body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--ink-900);
       min-height: 100vh;
-      color: #1e293b;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-feature-settings: 'cv11', 'ss03';
     }
 
-    /* ── HEADER ── */
-    .header {
-      background: white;
-      padding: 0 20px;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.12);
-      position: sticky;
-      top: 0;
-      z-index: 10;
+    body {
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 0%, rgba(236,72,153,.07), transparent 60%),
+        radial-gradient(ellipse 80% 50% at 80% 0%, rgba(99,102,241,.08), transparent 60%),
+        var(--bg);
+      background-attachment: fixed;
     }
 
-    .header-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      flex: 1;
+    button { font-family: inherit; }
+
+    /* ════════════════════════════════════════════════════
+       HEADER
+       ════════════════════════════════════════════════════ */
+    .topbar {
+      position: sticky; top: 0; z-index: 30;
+      background: rgba(255,255,255,.85);
+      backdrop-filter: saturate(180%) blur(14px);
+      -webkit-backdrop-filter: saturate(180%) blur(14px);
+      border-bottom: 1px solid var(--ink-200);
     }
 
-    .header-title small {
-      display: block;
-      font-size: 0.68rem;
-      font-weight: 400;
-      color: #64748b;
+    .topbar-inner {
+      max-width: 1400px; margin: 0 auto;
+      padding: 12px 20px;
+      display: flex; align-items: center; gap: 14px;
+    }
+
+    .logo {
+      width: 38px; height: 38px;
+      border-radius: 11px;
+      background: linear-gradient(135deg, #ec4899 0%, #6366f1 100%);
+      display: grid; place-items: center;
+      box-shadow: 0 4px 12px -2px rgba(99,102,241,.4);
+      flex-shrink: 0;
+    }
+    .logo svg { width: 22px; height: 22px; color: white; }
+
+    .brand { flex: 1; min-width: 0; }
+    .brand h1 {
+      font-size: 1rem; font-weight: 700; letter-spacing: -0.01em;
+      color: var(--ink-900);
+      line-height: 1.2;
+    }
+    .brand p {
+      font-size: 0.72rem; color: var(--ink-500); font-weight: 500;
+      margin-top: 1px;
     }
 
     .stats {
-      display: flex;
-      gap: 14px;
-      font-size: 0.78rem;
-      color: #64748b;
+      display: flex; gap: 6px;
+      align-items: center;
     }
+    .stat-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 5px 10px;
+      background: var(--ink-100); border-radius: 999px;
+      font-size: 0.72rem; font-weight: 600; color: var(--ink-700);
+    }
+    .stat-pill .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+    }
+    .stat-pill.ok .dot { background: var(--success); }
+    .stat-pill.pending .dot { background: var(--warning); }
 
-    .stats strong { color: #1e293b; }
-
-    /* ── BUTTONS ── */
+    /* ════════════════════════════════════════════════════
+       BUTTONS
+       ════════════════════════════════════════════════════ */
     .btn {
-      padding: 8px 14px;
-      border: none;
-      border-radius: 8px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 9px 14px;
+      border: none; border-radius: 10px;
+      font-size: 0.82rem; font-weight: 600;
       cursor: pointer;
-      font-size: 0.82rem;
-      font-weight: 600;
-      transition: filter 0.15s, transform 0.1s;
+      transition: transform .12s, box-shadow .15s, background .15s, color .15s;
       white-space: nowrap;
+      letter-spacing: -0.005em;
+    }
+    .btn:active { transform: translateY(1px) scale(.98); }
+    .btn svg { width: 15px; height: 15px; }
+
+    .btn-primary {
+      background: var(--accent); color: white;
+      box-shadow: 0 1px 2px rgba(99,102,241,.3), inset 0 1px 0 rgba(255,255,255,.15);
+    }
+    .btn-primary:hover { background: var(--accent-dark); box-shadow: 0 4px 12px -2px rgba(99,102,241,.5); }
+
+    .btn-ghost {
+      background: transparent; color: var(--ink-700);
+    }
+    .btn-ghost:hover { background: var(--ink-100); color: var(--ink-900); }
+
+    .btn-outline {
+      background: white; color: var(--ink-700);
+      border: 1px solid var(--ink-200);
+    }
+    .btn-outline:hover { border-color: var(--ink-300); background: var(--ink-100); }
+
+    .btn-success {
+      background: var(--success); color: white;
+      box-shadow: 0 1px 2px rgba(16,185,129,.3), inset 0 1px 0 rgba(255,255,255,.15);
+    }
+    .btn-success:hover { background: #059669; }
+
+    .btn-danger {
+      background: white; color: var(--danger); border: 1px solid #fecaca;
+    }
+    .btn-danger:hover { background: #fef2f2; border-color: var(--danger); }
+
+    .btn-sm { padding: 5px 11px; font-size: 0.74rem; gap: 4px; }
+    .btn-sm svg { width: 13px; height: 13px; }
+
+    .btn-icon { padding: 9px; min-width: 38px; }
+
+    /* ════════════════════════════════════════════════════
+       MAIN
+       ════════════════════════════════════════════════════ */
+    main {
+      max-width: 1400px; margin: 0 auto;
+      padding: 20px;
+      display: flex; flex-direction: column; gap: 18px;
     }
 
-    .btn:hover  { filter: brightness(0.9); }
-    .btn:active { filter: brightness(0.82); transform: scale(0.96); }
-
-    .btn-primary { background: var(--accent); color: white; }
-    .btn-outline  { background: white; color: var(--accent); border: 2px solid var(--accent); }
-    .btn-danger   { background: #ef4444; color: white; }
-    .btn-sm       { padding: 4px 10px; font-size: 0.73rem; }
-
-    /* ── MAIN ── */
-    .main {
-      padding: 16px;
-      max-width: 1440px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
+    /* Action toolbar */
+    .toolbar {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      align-items: center;
+      padding: 12px;
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--ink-200);
     }
+    .toolbar-label {
+      font-size: 0.72rem; font-weight: 700; color: var(--ink-500);
+      text-transform: uppercase; letter-spacing: 0.06em;
+      padding-left: 8px; margin-right: 4px;
+    }
+    .toolbar-spacer { flex: 1; }
+    .draft-name-label {
+      font-size: 0.78rem; font-weight: 600;
+      color: var(--ink-700);
+      padding: 0 8px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .draft-name-label .pulse {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 0 4px rgba(16,185,129,.15);
+    }
+    .draft-name-label.unsaved .pulse { background: var(--warning); box-shadow: 0 0 0 4px rgba(245,158,11,.15); }
 
-    /* ── INSTRUCTION BAR ── */
-    .instruction {
-      background: #fffbeb;
-      border: 1px solid #fcd34d;
-      border-radius: 10px;
+    /* Instruction bar */
+    .hint {
+      background: linear-gradient(135deg, #eef2ff 0%, #fdf2f8 100%);
+      border: 1px solid #c7d2fe;
+      border-radius: var(--radius);
       padding: 10px 14px;
-      font-size: 0.82rem;
-      color: #92400e;
-      display: none;
+      font-size: 0.83rem; font-weight: 500; color: var(--ink-700);
+      display: none; align-items: center; gap: 8px;
     }
+    .hint.visible { display: flex; }
+    .hint svg { width: 16px; height: 16px; color: var(--accent); flex-shrink: 0; }
 
-    .instruction.visible { display: block; }
-
-    /* ── POOL ── */
-    .pool-section {
-      background: white;
-      border-radius: 14px;
+    /* ── POOL ───────────────────────────────────────── */
+    .pool {
+      background: var(--surface);
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius-lg);
       padding: 16px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      box-shadow: var(--shadow-sm);
     }
 
-    .section-label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #94a3b8;
-      font-weight: 700;
+    .pool-head {
+      display: flex; align-items: center; gap: 8px;
       margin-bottom: 12px;
+    }
+    .pool-head h2 {
+      font-size: 0.78rem; font-weight: 700;
+      color: var(--ink-700);
+      text-transform: uppercase; letter-spacing: 0.06em;
     }
 
     .pool-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
     }
 
     .pool-zone {
-      border-radius: 10px;
+      border-radius: var(--radius);
       padding: 12px;
       min-height: 68px;
-      cursor: default;
-      transition: box-shadow 0.15s;
+      transition: box-shadow .15s, transform .12s;
+      border: 1.5px dashed transparent;
     }
 
-    .pool-zone.girls { background: var(--girl-bg); border: 2px dashed var(--girl-border); }
-    .pool-zone.boys  { background: var(--boy-bg);  border: 2px dashed var(--boy-border); }
-    .pool-zone.drop-target { box-shadow: 0 0 0 3px var(--accent); }
-    .pool-zone.clickable   { cursor: pointer; }
+    .pool-zone.girls {
+      background: var(--girl-50);
+      border-color: rgba(236,72,153,.3);
+    }
+    .pool-zone.boys {
+      background: var(--boy-50);
+      border-color: rgba(59,130,246,.3);
+    }
 
-    .pool-label {
-      font-size: 0.78rem;
-      font-weight: 700;
+    .pool-zone.drop-target {
+      box-shadow: 0 0 0 3px var(--accent), inset 0 0 0 1px var(--accent);
+      transform: scale(1.005);
+    }
+    .pool-zone.clickable { cursor: pointer; }
+    .pool-zone.clickable:hover { box-shadow: 0 0 0 2px var(--accent); }
+
+    .pool-zone-head {
+      display: flex; align-items: center; gap: 6px;
       margin-bottom: 8px;
+      font-size: 0.78rem; font-weight: 700;
+    }
+    .pool-zone.girls .pool-zone-head { color: var(--girl-700); }
+    .pool-zone.boys  .pool-zone-head { color: var(--boy-700); }
+
+    .badge-count {
+      background: rgba(255,255,255,.7);
+      padding: 1px 8px; border-radius: 999px;
+      font-size: 0.7rem; font-weight: 700;
     }
 
-    .pool-zone.girls .pool-label { color: var(--girl); }
-    .pool-zone.boys  .pool-label { color: var(--boy); }
-
-    /* ── CHIPS ── */
+    /* ── CHIPS ──────────────────────────────────────── */
     .chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      min-height: 30px;
+      display: flex; flex-wrap: wrap; gap: 6px;
+      min-height: 28px;
     }
 
     .chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 5px 11px;
-      border-radius: 20px;
-      font-size: 0.77rem;
-      font-weight: 600;
-      cursor: pointer;
-      user-select: none;
-      transition: transform 0.12s, box-shadow 0.12s;
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 11px 4px 4px;
+      border-radius: 999px;
+      font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; user-select: none;
+      transition: transform .12s, box-shadow .15s;
+      position: relative;
       white-space: nowrap;
+      color: white;
+      letter-spacing: -0.005em;
     }
+    .chip.girl { background: var(--girl-grad); box-shadow: 0 1px 2px rgba(236,72,153,.3); }
+    .chip.boy  { background: var(--boy-grad);  box-shadow: 0 1px 2px rgba(59,130,246,.3); }
 
-    .chip.girl { background: var(--girl); color: white; }
-    .chip.boy  { background: var(--boy);  color: white; }
-
-    .chip.doubt {
-      outline: 3px solid var(--doubt);
-      outline-offset: 2px;
-    }
+    .chip:hover:not(.selected) { transform: translateY(-1px); box-shadow: 0 4px 10px -2px rgba(0,0,0,.15); }
+    .chip:active { transform: scale(0.96); }
 
     .chip.selected {
-      transform: scale(1.1);
-      box-shadow: 0 0 0 3px var(--accent), 0 4px 14px rgba(0,0,0,0.25);
+      transform: scale(1.08) translateY(-1px);
+      box-shadow: 0 0 0 3px var(--accent), 0 8px 20px -4px rgba(99,102,241,.4);
+      z-index: 5;
     }
 
-    .chip:hover:not(.selected) { transform: scale(1.05); }
-    .chip:active { transform: scale(0.97); }
+    .chip.doubt::before {
+      content: '?';
+      position: absolute;
+      top: -5px; right: -5px;
+      width: 16px; height: 16px;
+      background: var(--warning);
+      color: white;
+      border-radius: 50%;
+      font-size: 10px; font-weight: 800;
+      display: grid; place-items: center;
+      box-shadow: 0 0 0 2px white;
+    }
+
+    .chip-avatar {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.25);
+      display: grid; place-items: center;
+      font-size: 0.7rem; font-weight: 800;
+      letter-spacing: 0;
+      flex-shrink: 0;
+    }
 
     .chip-class {
-      font-size: 0.65rem;
-      opacity: 0.75;
+      font-size: 0.62rem;
+      opacity: 0.85;
+      font-weight: 600;
+      margin-left: -2px;
     }
 
-    .chip-doubt {
-      background: var(--doubt);
-      color: white;
-      border-radius: 4px;
-      font-size: 0.6rem;
-      padding: 1px 4px;
-      font-weight: 700;
-    }
-
-    /* ── ROOMS ── */
+    /* ── ROOMS ──────────────────────────────────────── */
     .rooms-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
     }
 
-    .rooms-group {
-      background: white;
-      border-radius: 14px;
+    .room-column {
+      background: var(--surface);
+      border: 1px solid var(--ink-200);
+      border-radius: var(--radius-lg);
       padding: 16px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      box-shadow: var(--shadow-sm);
+      display: flex; flex-direction: column; gap: 10px;
     }
 
-    .group-title {
-      font-size: 1rem;
-      font-weight: 700;
-      padding-bottom: 10px;
-      margin-bottom: 12px;
-      border-bottom: 3px solid;
+    .column-head {
+      display: flex; align-items: center; gap: 8px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--ink-200);
     }
-
-    .rooms-group.girls .group-title { color: var(--girl); border-color: var(--girl); }
-    .rooms-group.boys  .group-title { color: var(--boy);  border-color: var(--boy); }
-
-    .room-card {
+    .column-icon {
+      width: 32px; height: 32px;
       border-radius: 10px;
+      display: grid; place-items: center;
+      color: white;
+    }
+    .room-column.girls .column-icon { background: var(--girl-grad); }
+    .room-column.boys  .column-icon { background: var(--boy-grad); }
+    .column-icon svg { width: 18px; height: 18px; }
+    .column-head h2 {
+      font-size: 0.95rem; font-weight: 700; flex: 1;
+      letter-spacing: -0.01em;
+    }
+    .room-column.girls .column-head h2 { color: var(--girl-700); }
+    .room-column.boys  .column-head h2 { color: var(--boy-700); }
+
+    .room {
+      border-radius: var(--radius);
       padding: 12px;
-      margin-bottom: 10px;
-      transition: box-shadow 0.15s;
+      transition: box-shadow .15s, transform .12s;
+      border: 1.5px solid transparent;
     }
+    .room.girls { background: var(--girl-50); border-color: var(--girl-100); }
+    .room.boys  { background: var(--boy-50);  border-color: var(--boy-100); }
+    .room.drop-target {
+      box-shadow: 0 0 0 3px var(--accent);
+      transform: translateY(-1px);
+    }
+    .room.clickable { cursor: pointer; }
+    .room.clickable:hover { box-shadow: 0 0 0 2px var(--accent); }
 
-    .room-card.girls { background: var(--girl-bg); border: 2px solid var(--girl-border); }
-    .room-card.boys  { background: var(--boy-bg);  border: 2px solid var(--boy-border); }
-    .room-card.drop-target { box-shadow: 0 0 0 3px var(--accent); }
-    .room-card.clickable   { cursor: pointer; }
-
-    .room-header {
-      display: flex;
-      align-items: center;
-      gap: 6px;
+    .room-head {
+      display: flex; align-items: center; gap: 6px;
       margin-bottom: 10px;
     }
+    .room-num {
+      width: 24px; height: 24px;
+      border-radius: 8px;
+      display: grid; place-items: center;
+      font-size: 0.72rem; font-weight: 800;
+      color: white;
+      flex-shrink: 0;
+    }
+    .room.girls .room-num { background: var(--girl-grad); }
+    .room.boys  .room-num { background: var(--boy-grad); }
 
-    .room-name-input {
-      flex: 1;
-      border: none;
-      background: transparent;
-      font-weight: 700;
-      font-size: 0.88rem;
-      color: inherit;
-      padding: 3px 6px;
+    .room-name {
+      flex: 1; min-width: 0;
+      border: none; background: transparent;
+      font-family: inherit;
+      font-size: 0.88rem; font-weight: 700;
+      color: var(--ink-900);
+      padding: 4px 6px;
       border-radius: 6px;
       cursor: text;
-      min-width: 0;
     }
-
-    .room-name-input:focus {
-      background: white;
-      outline: 2px solid var(--accent);
+    .room-name:focus {
+      background: white; outline: 2px solid var(--accent);
     }
 
     .room-count {
-      font-size: 0.72rem;
-      background: rgba(255,255,255,0.8);
-      padding: 2px 8px;
-      border-radius: 10px;
-      color: #64748b;
-      font-weight: 600;
+      background: rgba(255,255,255,.7);
+      padding: 2px 8px; border-radius: 999px;
+      font-size: 0.7rem; font-weight: 700;
+      color: var(--ink-700);
       white-space: nowrap;
     }
 
     .room-clear {
-      font-size: 0.7rem;
-      padding: 2px 8px;
-      border-radius: 6px;
-      border: none;
-      background: rgba(239,68,68,0.12);
-      color: #ef4444;
+      border: none; background: transparent;
+      padding: 4px; border-radius: 6px;
       cursor: pointer;
-      font-weight: 600;
-      white-space: nowrap;
+      color: var(--ink-500);
+      display: grid; place-items: center;
+      transition: background .15s, color .15s;
     }
+    .room-clear:hover { background: rgba(239,68,68,.1); color: var(--danger); }
+    .room-clear svg { width: 14px; height: 14px; }
 
-    .room-clear:hover { background: rgba(239,68,68,0.22); }
-
-    /* ── MODAL ── */
+    /* ── MODAL ──────────────────────────────────────── */
     .overlay {
+      position: fixed; inset: 0;
+      background: rgba(15,23,42,.5);
+      backdrop-filter: blur(4px);
+      z-index: 100;
       display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(15,23,42,0.55);
-      z-index: 50;
-      align-items: center;
-      justify-content: center;
+      align-items: center; justify-content: center;
       padding: 16px;
+      animation: fadeIn .15s ease-out;
     }
-
     .overlay.open { display: flex; }
 
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
     .modal {
-      background: white;
-      border-radius: 16px;
-      padding: 24px;
-      width: 100%;
-      max-width: 500px;
-      max-height: 82vh;
-      overflow-y: auto;
+      background: var(--surface);
+      border-radius: var(--radius-xl);
+      width: 100%; max-width: 520px;
+      max-height: 85vh;
+      display: flex; flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      animation: slideUp .2s ease-out;
+      overflow: hidden;
     }
 
-    .modal-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 16px;
+    .modal-head {
+      padding: 20px 22px 14px;
+      display: flex; align-items: center; gap: 10px;
+      border-bottom: 1px solid var(--ink-100);
     }
+    .modal-head-icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: var(--accent-light);
+      color: var(--accent);
+      display: grid; place-items: center;
+      flex-shrink: 0;
+    }
+    .modal-head-icon svg { width: 18px; height: 18px; }
+    .modal-head h2 {
+      font-size: 1.05rem; font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .modal-head p { font-size: 0.78rem; color: var(--ink-500); margin-top: 1px; }
+    .modal-close {
+      border: none; background: transparent;
+      padding: 6px; border-radius: 8px;
+      cursor: pointer; color: var(--ink-500);
+      display: grid; place-items: center;
+    }
+    .modal-close:hover { background: var(--ink-100); color: var(--ink-900); }
+    .modal-close svg { width: 18px; height: 18px; }
+
+    .modal-body {
+      padding: 14px 22px 20px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .modal-foot {
+      padding: 12px 22px;
+      border-top: 1px solid var(--ink-100);
+      display: flex; gap: 8px; justify-content: flex-end;
+      background: var(--ink-100);
+    }
+
+    /* Draft items */
+    .draft-list { display: flex; flex-direction: column; gap: 8px; }
 
     .draft-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 2px solid #e2e8f0;
-      margin-bottom: 8px;
-      transition: border-color 0.15s;
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px;
+      border: 1.5px solid var(--ink-200);
+      border-radius: var(--radius);
+      background: white;
+      transition: border-color .15s, transform .12s;
     }
+    .draft-item:hover { border-color: var(--accent); transform: translateY(-1px); }
+    .draft-item.current { border-color: var(--success); background: #f0fdf4; }
 
-    .draft-item:hover { border-color: var(--accent); }
+    .draft-icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%);
+      color: white;
+      display: grid; place-items: center;
+      font-weight: 800;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+    .draft-icon.current { background: linear-gradient(135deg, var(--success) 0%, #34d399 100%); }
 
-    .draft-name { font-weight: 600; font-size: 0.88rem; }
-    .draft-meta { font-size: 0.72rem; color: #94a3b8; margin-top: 2px; }
+    .draft-info { flex: 1; min-width: 0; }
+    .draft-name {
+      font-size: 0.88rem; font-weight: 700; color: var(--ink-900);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .draft-meta {
+      font-size: 0.72rem; color: var(--ink-500); margin-top: 2px;
+      display: flex; gap: 6px; align-items: center;
+    }
+    .draft-meta-dot { width: 3px; height: 3px; background: var(--ink-300); border-radius: 50%; }
+
+    .draft-actions { display: flex; gap: 4px; }
 
     .empty-state {
       text-align: center;
-      color: #94a3b8;
-      padding: 28px;
-      font-size: 0.88rem;
+      padding: 36px 20px;
+      color: var(--ink-500);
+    }
+    .empty-state-icon {
+      width: 56px; height: 56px;
+      border-radius: 16px;
+      background: var(--ink-100);
+      color: var(--ink-500);
+      display: grid; place-items: center;
+      margin: 0 auto 12px;
+    }
+    .empty-state-icon svg { width: 26px; height: 26px; }
+    .empty-state h3 { font-size: 0.95rem; font-weight: 700; color: var(--ink-900); margin-bottom: 4px; }
+    .empty-state p { font-size: 0.82rem; }
+
+    /* Start options */
+    .start-options {
+      display: flex; flex-direction: column; gap: 8px;
+      margin-bottom: 16px;
+    }
+    .start-option {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px;
+      border: 1.5px solid var(--ink-200);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all .15s;
+      background: white;
+      text-align: left;
+      width: 100%;
+      font-family: inherit;
+    }
+    .start-option:hover {
+      border-color: var(--accent);
+      background: var(--accent-light);
+      transform: translateY(-1px);
+    }
+    .start-option-icon {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      background: var(--accent-light);
+      color: var(--accent);
+      display: grid; place-items: center;
+      flex-shrink: 0;
+    }
+    .start-option-icon svg { width: 20px; height: 20px; }
+    .start-option-text { flex: 1; }
+    .start-option-title { font-size: 0.9rem; font-weight: 700; color: var(--ink-900); }
+    .start-option-desc { font-size: 0.78rem; color: var(--ink-500); margin-top: 2px; }
+
+    .divider {
+      display: flex; align-items: center; gap: 10px;
+      margin: 16px 0 10px;
+      font-size: 0.72rem; font-weight: 700; color: var(--ink-500);
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--ink-200);
     }
 
-    /* ── TOAST ── */
+    /* Toast */
     #toast {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1e293b;
-      color: white;
-      padding: 10px 18px;
-      border-radius: 10px;
-      font-size: 0.85rem;
-      z-index: 200;
-      max-width: 90vw;
-      text-align: center;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: var(--ink-900); color: white;
+      padding: 12px 18px; border-radius: 12px;
+      font-size: 0.85rem; font-weight: 500;
+      z-index: 200; max-width: 90vw; text-align: center;
+      box-shadow: var(--shadow-lg);
       display: none;
+      animation: slideUpToast .2s ease-out;
+    }
+    @keyframes slideUpToast { from { transform: translate(-50%, 20px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+    #toast.error { background: var(--danger); }
+    #toast.success { background: var(--success); }
+
+    /* Share modal preview */
+    .share-actions {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
     }
 
-    /* ── LEGEND ── */
-    .legend {
-      display: flex;
-      gap: 16px;
-      font-size: 0.75rem;
-      color: #64748b;
-      flex-wrap: wrap;
+    .share-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      padding: 14px 8px;
+      border: 1.5px solid var(--ink-200);
+      border-radius: var(--radius);
+      background: white;
+      cursor: pointer;
+      transition: all .15s;
+      font-family: inherit;
+    }
+    .share-btn:hover { border-color: var(--accent); transform: translateY(-1px); background: var(--accent-light); }
+    .share-btn-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: grid; place-items: center;
+      color: white;
+    }
+    .share-btn-icon svg { width: 22px; height: 22px; }
+    .share-btn-text { font-size: 0.8rem; font-weight: 700; color: var(--ink-900); }
+    .share-btn.whatsapp .share-btn-icon { background: #25D366; }
+    .share-btn.image .share-btn-icon { background: var(--accent); }
+    .share-btn.copy .share-btn-icon { background: var(--ink-700); }
+    .share-btn.native .share-btn-icon { background: linear-gradient(135deg, #ec4899 0%, #6366f1 100%); }
+
+    /* ════════════════════════════════════════════════════
+       EXPORT CANVAS (hidden, rendered for image generation)
+       ════════════════════════════════════════════════════ */
+    .export-stage {
+      position: fixed;
+      left: -10000px; top: 0;
+      width: 1000px;
+      background: white;
+      font-family: var(--font);
+      padding: 32px;
+      box-sizing: border-box;
     }
 
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
+    .export-header {
+      display: flex; align-items: center; gap: 14px;
+      padding-bottom: 18px;
+      margin-bottom: 22px;
+      border-bottom: 2px solid var(--ink-100);
+    }
+    .export-logo {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #ec4899 0%, #6366f1 100%);
+      display: grid; place-items: center;
+    }
+    .export-logo svg { width: 28px; height: 28px; color: white; }
+    .export-title { flex: 1; }
+    .export-title h1 {
+      font-size: 1.5rem; font-weight: 800; color: var(--ink-900);
+      letter-spacing: -0.02em;
+    }
+    .export-title p { font-size: 0.85rem; color: var(--ink-500); margin-top: 2px; }
+    .export-stats {
+      display: flex; gap: 8px;
+    }
+    .export-stat {
+      padding: 6px 12px;
+      background: var(--ink-100);
+      border-radius: 10px;
+      font-size: 0.8rem; font-weight: 700; color: var(--ink-700);
     }
 
-    .legend-dot {
-      width: 10px;
-      height: 10px;
+    .export-columns {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+    }
+
+    .export-col-title {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 1rem; font-weight: 800;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid;
+    }
+    .export-col.girls .export-col-title { color: var(--girl-700); border-color: var(--girl-500); }
+    .export-col.boys  .export-col-title { color: var(--boy-700);  border-color: var(--boy-500); }
+
+    .export-col-title-icon {
+      width: 26px; height: 26px;
+      border-radius: 8px;
+      display: grid; place-items: center;
+      color: white;
+    }
+    .export-col-title-icon svg { width: 14px; height: 14px; }
+    .export-col.girls .export-col-title-icon { background: var(--girl-grad); }
+    .export-col.boys  .export-col-title-icon { background: var(--boy-grad); }
+
+    .export-room {
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      border: 1.5px solid;
+    }
+    .export-room.girls { background: var(--girl-50); border-color: var(--girl-100); }
+    .export-room.boys  { background: var(--boy-50);  border-color: var(--boy-100); }
+
+    .export-room-head {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 10px;
+    }
+    .export-room-num {
+      width: 24px; height: 24px;
+      border-radius: 8px;
+      display: grid; place-items: center;
+      color: white;
+      font-size: 0.78rem; font-weight: 800;
+    }
+    .export-room.girls .export-room-num { background: var(--girl-grad); }
+    .export-room.boys  .export-room-num { background: var(--boy-grad); }
+    .export-room-name { flex: 1; font-size: 0.92rem; font-weight: 700; color: var(--ink-900); }
+    .export-room-count {
+      background: white; padding: 2px 8px; border-radius: 999px;
+      font-size: 0.7rem; font-weight: 700; color: var(--ink-500);
+    }
+
+    .export-students {
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .export-student {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.86rem;
+      color: var(--ink-900);
+    }
+    .export-student-bullet {
+      width: 18px; height: 18px;
       border-radius: 50%;
+      display: grid; place-items: center;
+      color: white;
+      font-size: 0.62rem; font-weight: 800;
+      flex-shrink: 0;
     }
+    .export-room.girls .export-student-bullet { background: var(--girl-500); }
+    .export-room.boys  .export-student-bullet { background: var(--boy-500); }
+    .export-student-class {
+      margin-left: auto;
+      font-size: 0.72rem;
+      color: var(--ink-500);
+      font-weight: 600;
+    }
+    .export-student-doubt {
+      background: var(--warning);
+      color: white;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 0.62rem;
+      font-weight: 700;
+      margin-left: 6px;
+    }
+    .export-empty { font-size: 0.78rem; color: var(--ink-500); font-style: italic; padding: 4px 0; }
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 700px) {
-      .pool-grid   { grid-template-columns: 1fr; }
-      .rooms-grid  { grid-template-columns: 1fr; }
-      .stats       { display: none; }
-      .header-title small { display: none; }
+    .export-footer {
+      margin-top: 22px;
+      padding-top: 14px;
+      border-top: 1px solid var(--ink-200);
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.72rem; color: var(--ink-500);
+    }
+    .export-unassigned {
+      margin-top: 18px;
+      padding: 12px 14px;
+      background: var(--warning-light);
+      border: 1.5px solid #fde68a;
+      border-radius: 12px;
+      font-size: 0.82rem;
+      color: #92400e;
+    }
+    .export-unassigned strong { color: #78350f; }
+
+    /* ── RESPONSIVE ─────────────────────────────────── */
+    @media (max-width: 760px) {
+      .pool-grid { grid-template-columns: 1fr; }
+      .rooms-grid { grid-template-columns: 1fr; }
+      .brand p, .stats { display: none; }
+      .topbar-inner { padding: 10px 14px; gap: 10px; }
+      main { padding: 12px; gap: 12px; }
+      .toolbar-label { display: none; }
+      .draft-name-label { display: none; }
+    }
+    @media (max-width: 500px) {
+      .btn { padding: 8px 11px; font-size: 0.76rem; }
+      .btn-icon { padding: 8px; min-width: 34px; }
     }
   </style>
 </head>
 <body>
 
-<header class="header">
-  <div class="header-title">
-    Habitaciones — Fin de Curso
-    <small>6.º Primaria · 3 hab. chicas + 3 hab. chicos</small>
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1h-5v-7H9v7H4a1 1 0 01-1-1V9.5z"/>
+      </svg>
+    </div>
+    <div class="brand">
+      <h1>Habitaciones · Fin de Curso</h1>
+      <p>6.º Primaria — 3 habitaciones chicas + 3 chicos</p>
+    </div>
+    <div class="stats" id="stats"></div>
   </div>
-  <div class="stats" id="stats"></div>
-  <button class="btn btn-outline" onclick="openModal()">📂 Borradores</button>
-  <button class="btn btn-primary" onclick="saveDraft()">💾 Guardar</button>
 </header>
 
-<div class="main">
-  <div class="instruction" id="instruction"></div>
+<main>
 
-  <!-- Pool de alumnos sin asignar -->
-  <div class="pool-section">
-    <div class="section-label">Alumnos sin asignar — pulsa un alumno para seleccionarlo, luego pulsa la habitación de destino</div>
+  <!-- ACTION TOOLBAR -->
+  <div class="toolbar">
+    <div class="draft-name-label" id="draftLabel">
+      <span class="pulse"></span>
+      <span id="draftLabelText">Sin guardar</span>
+    </div>
+    <div class="toolbar-spacer"></div>
+
+    <button class="btn btn-ghost" onclick="openNewModal()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      Nuevo
+    </button>
+    <button class="btn btn-outline" onclick="openDraftsModal()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v13a1 1 0 001 1h16a1 1 0 001-1V9a1 1 0 00-1-1h-9l-2-3H4a1 1 0 00-1 1v1z"/></svg>
+      Borradores
+    </button>
+    <button class="btn btn-success" onclick="saveCurrent()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+      Guardar
+    </button>
+    <button class="btn btn-primary" onclick="openShareModal()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+      Compartir
+    </button>
+  </div>
+
+  <!-- HINT -->
+  <div class="hint" id="hint">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+    <span id="hintText"></span>
+  </div>
+
+  <!-- POOL -->
+  <section class="pool">
+    <div class="pool-head">
+      <h2>Sin asignar</h2>
+    </div>
     <div class="pool-grid">
       <div class="pool-zone girls" id="pool-girls"
            onclick="onClickZone('pool','girls')"
-           ondrop="onDrop(event,'pool','girls')"
-           ondragover="onDragOver(event)"
-           ondragleave="onDragLeave(event)">
-        <div class="pool-label">Chicas (<span id="cnt-pool-girls">0</span>)</div>
+           ondragover="onDragOver(event)" ondragleave="onDragLeave(event)"
+           ondrop="onDrop(event,'pool','girls')">
+        <div class="pool-zone-head">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M12 12v8M9 17h6"/></svg>
+          Chicas
+          <span class="badge-count" id="cnt-pool-girls">0</span>
+        </div>
         <div class="chips" id="chips-pool-girls"></div>
       </div>
       <div class="pool-zone boys" id="pool-boys"
            onclick="onClickZone('pool','boys')"
-           ondrop="onDrop(event,'pool','boys')"
-           ondragover="onDragOver(event)"
-           ondragleave="onDragLeave(event)">
-        <div class="pool-label">Chicos (<span id="cnt-pool-boys">0</span>)</div>
+           ondragover="onDragOver(event)" ondragleave="onDragLeave(event)"
+           ondrop="onDrop(event,'pool','boys')">
+        <div class="pool-zone-head">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="14" r="6"/><path d="M14 10l6-6M14 4h6v6"/></svg>
+          Chicos
+          <span class="badge-count" id="cnt-pool-boys">0</span>
+        </div>
         <div class="chips" id="chips-pool-boys"></div>
       </div>
     </div>
-    <div class="legend" style="margin-top:10px">
-      <div class="legend-item">
-        <div class="legend-dot" style="background:var(--girl)"></div> Chica confirmada
-      </div>
-      <div class="legend-item">
-        <div class="legend-dot" style="background:var(--boy)"></div> Chico confirmado
-      </div>
-      <div class="legend-item">
-        <div class="legend-dot" style="background:var(--girl);outline:2px solid var(--doubt);outline-offset:1px"></div>
-        En duda (Alison / Emanuel)
-      </div>
-    </div>
-  </div>
+  </section>
 
-  <!-- Habitaciones -->
-  <div class="rooms-grid">
-    <div class="rooms-group girls">
-      <div class="group-title">🩷 Habitaciones Chicas</div>
+  <!-- ROOMS -->
+  <section class="rooms-grid">
+    <div class="room-column girls">
+      <div class="column-head">
+        <div class="column-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M12 12v8M9 17h6"/></svg>
+        </div>
+        <h2>Habitaciones Chicas</h2>
+      </div>
       <div id="rooms-girls"></div>
     </div>
-    <div class="rooms-group boys">
-      <div class="group-title">💙 Habitaciones Chicos</div>
+    <div class="room-column boys">
+      <div class="column-head">
+        <div class="column-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="14" r="6"/><path d="M14 10l6-6M14 4h6v6"/></svg>
+        </div>
+        <h2>Habitaciones Chicos</h2>
+      </div>
       <div id="rooms-boys"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ════════════════════════════════════════════════════
+     MODALS
+     ════════════════════════════════════════════════════ -->
+
+<!-- New / Start modal -->
+<div class="overlay" id="newOverlay" onclick="maybeClose(event,'newOverlay')">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-head-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      </div>
+      <div style="flex:1">
+        <h2>Nuevo reparto</h2>
+        <p>¿Cómo quieres empezar?</p>
+      </div>
+      <button class="modal-close" onclick="closeModal('newOverlay')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="start-options">
+        <button class="start-option" onclick="newBlank()">
+          <div class="start-option-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M12 18v-6M9 15h6"/></svg>
+          </div>
+          <div class="start-option-text">
+            <div class="start-option-title">Empezar de cero</div>
+            <div class="start-option-desc">Habitaciones vacías, todos los alumnos sin asignar</div>
+          </div>
+        </button>
+      </div>
+
+      <div id="newDraftsSection">
+        <div class="divider">O parte de un borrador</div>
+        <div class="draft-list" id="newDraftsList"></div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Modal borradores -->
-<div class="overlay" id="overlay" onclick="maybeCloseModal(event)">
-  <div class="modal" id="modal">
-    <div class="modal-title">📂 Borradores guardados</div>
-    <div id="draft-list"></div>
-    <button class="btn btn-outline" style="width:100%;margin-top:10px" onclick="closeModal()">Cerrar</button>
+<!-- Drafts modal -->
+<div class="overlay" id="draftsOverlay" onclick="maybeClose(event,'draftsOverlay')">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-head-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v13a1 1 0 001 1h16a1 1 0 001-1V9a1 1 0 00-1-1h-9l-2-3H4a1 1 0 00-1 1v1z"/></svg>
+      </div>
+      <div style="flex:1">
+        <h2>Borradores guardados</h2>
+        <p>Consulta, carga o elimina repartos anteriores</p>
+      </div>
+      <button class="modal-close" onclick="closeModal('draftsOverlay')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="draft-list" id="draftsList"></div>
+    </div>
   </div>
 </div>
 
+<!-- Share modal -->
+<div class="overlay" id="shareOverlay" onclick="maybeClose(event,'shareOverlay')">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-head-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+      </div>
+      <div style="flex:1">
+        <h2>Compartir reparto</h2>
+        <p>Genera una imagen y envíala donde quieras</p>
+      </div>
+      <button class="modal-close" onclick="closeModal('shareOverlay')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:.85rem;color:var(--ink-700);margin-bottom:14px;line-height:1.5">
+        Se generará una imagen con el reparto actual y el mensaje:<br>
+        <em style="color:var(--ink-500);font-size:.78rem">"He creado este reparto de habitaciones para el viaje. ¿Quieres hacer el tuyo y demostrarme que sabes más que yo de los alumnos?"</em>
+      </p>
+      <div class="share-actions">
+        <button class="share-btn native" onclick="shareNative()" id="shareNativeBtn" style="display:none">
+          <div class="share-btn-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+          </div>
+          <div class="share-btn-text">Compartir...</div>
+        </button>
+        <button class="share-btn whatsapp" onclick="shareWhatsapp()">
+          <div class="share-btn-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-1-.3-.1-.5-.1-.7.2-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.5-1.7-1.6-2-.2-.3 0-.4.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.3 5.1 4.6.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.5-.3zM12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.6 1.4 5.2L2 22l4.9-1.3c1.5.8 3.3 1.3 5.1 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
+          </div>
+          <div class="share-btn-text">WhatsApp</div>
+        </button>
+        <button class="share-btn image" onclick="downloadImage()">
+          <div class="share-btn-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          </div>
+          <div class="share-btn-text">Descargar imagen</div>
+        </button>
+        <button class="share-btn copy" onclick="copyImage()">
+          <div class="share-btn-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          </div>
+          <div class="share-btn-text">Copiar imagen</div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Save modal -->
+<div class="overlay" id="saveOverlay" onclick="maybeClose(event,'saveOverlay')">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-head-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+      </div>
+      <div style="flex:1">
+        <h2>Guardar borrador</h2>
+        <p>Ponle un nombre para encontrarlo después</p>
+      </div>
+      <button class="modal-close" onclick="closeModal('saveOverlay')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="text" id="saveNameInput" placeholder="Nombre del borrador"
+        style="width:100%;padding:12px 14px;border:1.5px solid var(--ink-200);border-radius:10px;font-size:.95rem;font-family:inherit;font-weight:500;outline:none;transition:border-color .15s"
+        onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--ink-200)'"
+        onkeydown="if(event.key==='Enter'){confirmSave()}">
+      <p style="font-size:.78rem;color:var(--ink-500);margin-top:8px" id="saveHint"></p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('saveOverlay')">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmSave()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
 <div id="toast"></div>
 
+<!-- Export stage (hidden, rendered to canvas for sharing) -->
+<div class="export-stage" id="exportStage" aria-hidden="true"></div>
+
 <script>
-// ═══════════════════════════════════════════════════════
-//  DATOS
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+//  STUDENT DATA
+// ═══════════════════════════════════════════════════════════════
 const STUDENTS = [
   {id: 1,  name: "Elena",            clase: "6.º A", sex: "girl"},
   {id: 2,  name: "Martín García",    clase: "6.º A", sex: "boy"},
@@ -509,60 +1133,68 @@ const STUDENTS = [
   {id: 40, name: "Mathias Muralles", clase: "6.º B", sex: "boy"},
   {id: 41, name: "Joaquín",          clase: "6.º C", sex: "boy"},
   {id: 42, name: "Saray",            clase: "6.º A", sex: "girl"},
-  // En duda
   {id: 43, name: "Alison",           clase: "6.º C", sex: "girl", doubt: true},
   {id: 44, name: "Emanuel",          clase: "6.º C", sex: "boy",  doubt: true},
 ];
 
-// ═══════════════════════════════════════════════════════
-//  ESTADO
-// ═══════════════════════════════════════════════════════
-let rooms = {
-  girls: [
-    {name: "Habitación Chicas 1", students: []},
-    {name: "Habitación Chicas 2", students: []},
-    {name: "Habitación Chicas 3", students: []},
-  ],
-  boys: [
-    {name: "Habitación Chicos 1", students: []},
-    {name: "Habitación Chicos 2", students: []},
-    {name: "Habitación Chicos 3", students: []},
-  ]
-};
+const SHARE_MESSAGE = "He creado este reparto de habitaciones para el viaje. ¿Quieres hacer el tuyo y demostrarme que sabes más que yo de los alumnos?";
+const STORAGE_KEY = 'fdc_habitaciones_v2';
 
-let selected = null; // id del alumno seleccionado para click-to-move
-let dragging = null; // id del alumno siendo arrastrado
+// ═══════════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════════
+function emptyRooms() {
+  return {
+    girls: [
+      {name: "Habitación Chicas 1", students: []},
+      {name: "Habitación Chicas 2", students: []},
+      {name: "Habitación Chicas 3", students: []},
+    ],
+    boys: [
+      {name: "Habitación Chicos 1", students: []},
+      {name: "Habitación Chicos 2", students: []},
+      {name: "Habitación Chicos 3", students: []},
+    ]
+  };
+}
 
-// ═══════════════════════════════════════════════════════
-//  UTILIDADES
-// ═══════════════════════════════════════════════════════
+let rooms = emptyRooms();
+let selected = null;
+let dragging = null;
+let currentDraftId = null; // id of the loaded draft (null = unsaved new)
+let currentDraftName = null;
+let dirty = false; // unsaved changes
+
+// ═══════════════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════════════
+const $ = id => document.getElementById(id);
 const byId = id => STUDENTS.find(s => s.id === id);
 const sexGroup = s => s.sex === 'girl' ? 'girls' : 'boys';
 const clone = obj => JSON.parse(JSON.stringify(obj));
+const initial = name => name.trim().charAt(0).toUpperCase();
 
 function assignedSet() {
   const ids = new Set();
-  ['girls', 'boys'].forEach(g =>
-    rooms[g].forEach(r => r.students.forEach(id => ids.add(id)))
-  );
+  ['girls','boys'].forEach(g => rooms[g].forEach(r => r.students.forEach(id => ids.add(id))));
   return ids;
 }
-
 function poolStudents(group) {
   const assigned = assignedSet();
   const sex = group === 'girls' ? 'girl' : 'boy';
   return STUDENTS.filter(s => s.sex === sex && !assigned.has(s.id));
 }
-
 function removeFromAll(id) {
-  ['girls', 'boys'].forEach(g =>
-    rooms[g].forEach(r => { r.students = r.students.filter(x => x !== id); })
-  );
+  ['girls','boys'].forEach(g => rooms[g].forEach(r => { r.students = r.students.filter(x => x !== id); }));
+}
+function markDirty() {
+  dirty = true;
+  updateDraftLabel();
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 //  RENDER
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 function makeChip(student) {
   const chip = document.createElement('span');
   chip.className = `chip ${student.sex}${student.doubt ? ' doubt' : ''}${selected === student.id ? ' selected' : ''}`;
@@ -571,8 +1203,9 @@ function makeChip(student) {
   chip.title = `${student.name} · ${student.clase}${student.doubt ? ' · En duda' : ''}`;
 
   chip.innerHTML =
-    `${student.name}<span class="chip-class">${student.clase}</span>` +
-    (student.doubt ? '<span class="chip-doubt">?</span>' : '');
+    `<span class="chip-avatar">${initial(student.name)}</span>` +
+    `${student.name}` +
+    `<span class="chip-class">${student.clase.replace('6.º ', '')}</span>`;
 
   chip.addEventListener('click', e => { e.stopPropagation(); toggleSelect(student.id); });
 
@@ -582,70 +1215,71 @@ function makeChip(student) {
     e.dataTransfer.effectAllowed = 'move';
     requestAnimationFrame(() => { chip.style.opacity = '0.4'; });
   });
-  chip.addEventListener('dragend', () => {
-    dragging = null;
-    chip.style.opacity = '';
-  });
+  chip.addEventListener('dragend', () => { dragging = null; chip.style.opacity = ''; });
 
   return chip;
 }
 
 function renderPool() {
-  ['girls', 'boys'].forEach(group => {
+  ['girls','boys'].forEach(group => {
     const pool = poolStudents(group);
-    const chipsEl = document.getElementById(`chips-pool-${group}`);
-    const cntEl   = document.getElementById(`cnt-pool-${group}`);
+    const chipsEl = $(`chips-pool-${group}`);
+    const cntEl   = $(`cnt-pool-${group}`);
     chipsEl.innerHTML = '';
     pool.forEach(s => chipsEl.appendChild(makeChip(s)));
     cntEl.textContent = pool.length;
 
-    const zone = document.getElementById(`pool-${group}`);
+    const zone = $(`pool-${group}`);
     zone.classList.toggle('clickable', selected !== null && sexGroup(byId(selected)) === group);
   });
 }
 
 function renderRooms() {
-  ['girls', 'boys'].forEach(group => {
-    const container = document.getElementById(`rooms-${group}`);
+  ['girls','boys'].forEach(group => {
+    const container = $(`rooms-${group}`);
     container.innerHTML = '';
 
     rooms[group].forEach((room, idx) => {
       const card = document.createElement('div');
-      card.className = `room-card ${group}`;
-      if (selected !== null) card.classList.add('clickable');
+      card.className = `room ${group}`;
+      if (selected !== null && sexGroup(byId(selected)) === group) card.classList.add('clickable');
 
       card.addEventListener('click',     () => onClickZone('room', group, idx));
       card.addEventListener('dragover',  onDragOver);
       card.addEventListener('dragleave', onDragLeave);
       card.addEventListener('drop',      e => onDrop(e, 'room', group, idx));
 
-      // Header
-      const header = document.createElement('div');
-      header.className = 'room-header';
+      const head = document.createElement('div');
+      head.className = 'room-head';
+
+      const num = document.createElement('div');
+      num.className = 'room-num';
+      num.textContent = (idx + 1);
 
       const nameInput = document.createElement('input');
-      nameInput.className = 'room-name-input';
+      nameInput.className = 'room-name';
       nameInput.value = room.name;
-      nameInput.addEventListener('change', () => { rooms[group][idx].name = nameInput.value; });
+      nameInput.addEventListener('change', () => { rooms[group][idx].name = nameInput.value; markDirty(); });
       nameInput.addEventListener('click',  e => e.stopPropagation());
 
       const count = document.createElement('span');
       count.className = 'room-count';
-      count.textContent = `${room.students.length} alumno${room.students.length !== 1 ? 's' : ''}`;
+      count.textContent = room.students.length;
 
       const clearBtn = document.createElement('button');
       clearBtn.className = 'room-clear';
-      clearBtn.textContent = 'Vaciar';
-      clearBtn.title = 'Devolver todos los alumnos al pool';
+      clearBtn.title = 'Vaciar habitación';
+      clearBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/></svg>';
       clearBtn.addEventListener('click', e => {
         e.stopPropagation();
+        if (rooms[group][idx].students.length === 0) return;
         rooms[group][idx].students = [];
+        markDirty();
         render();
       });
 
-      header.append(nameInput, count, clearBtn);
+      head.append(num, nameInput, count, clearBtn);
 
-      // Chips
       const chipsEl = document.createElement('div');
       chipsEl.className = 'chips';
       room.students.forEach(id => {
@@ -653,29 +1287,43 @@ function renderRooms() {
         if (s) chipsEl.appendChild(makeChip(s));
       });
 
-      card.append(header, chipsEl);
+      card.append(head, chipsEl);
       container.appendChild(card);
     });
   });
 }
 
 function renderStats() {
-  const assigned   = assignedSet().size;
-  const total      = STUDENTS.length;
+  const assigned = assignedSet().size;
+  const total = STUDENTS.length;
   const unassigned = total - assigned;
-  document.getElementById('stats').innerHTML =
-    `<span>&#10003; <strong>${assigned}</strong> asignados</span>` +
-    `<span>&#9723; <strong>${unassigned}</strong> sin asignar</span>`;
+  const html = `
+    <div class="stat-pill ok"><span class="dot"></span>${assigned} asignados</div>
+    <div class="stat-pill ${unassigned > 0 ? 'pending' : 'ok'}"><span class="dot"></span>${unassigned} sin asignar</div>
+  `;
+  $('stats').innerHTML = html;
 }
 
-function renderInstruction() {
-  const el = document.getElementById('instruction');
+function renderHint() {
+  const el = $('hint');
   if (selected !== null) {
     const s = byId(selected);
-    el.textContent = `Seleccionado/a: "${s.name}" — pulsa una habitación para asignarlo/a, o el pool para devolver.`;
+    $('hintText').textContent = `Seleccionado: "${s.name}" — pulsa una habitación de ${sexGroup(s) === 'girls' ? 'chicas' : 'chicos'} o el pool para colocarlo/a.`;
     el.classList.add('visible');
   } else {
     el.classList.remove('visible');
+  }
+}
+
+function updateDraftLabel() {
+  const label = $('draftLabel');
+  const text = $('draftLabelText');
+  if (currentDraftName) {
+    label.classList.toggle('unsaved', dirty);
+    text.textContent = dirty ? `${currentDraftName} · cambios sin guardar` : currentDraftName;
+  } else {
+    label.classList.add('unsaved');
+    text.textContent = 'Sin guardar';
   }
 }
 
@@ -683,12 +1331,13 @@ function render() {
   renderPool();
   renderRooms();
   renderStats();
-  renderInstruction();
+  renderHint();
+  updateDraftLabel();
 }
 
-// ═══════════════════════════════════════════════════════
-//  INTERACCIONES
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+//  INTERACTIONS
+// ═══════════════════════════════════════════════════════════════
 function toggleSelect(id) {
   selected = (selected === id) ? null : id;
   render();
@@ -696,23 +1345,21 @@ function toggleSelect(id) {
 
 function onClickZone(type, group, idx) {
   if (selected === null) return;
-
   const s = byId(selected);
-  const studentGroup = sexGroup(s);
-
+  const sg = sexGroup(s);
   if (type === 'room') {
-    if (studentGroup !== group) {
-      showToast(`${s.name} es de ${studentGroup === 'girls' ? 'chicas' : 'chicos'} — no puede ir a habitación de ${group === 'girls' ? 'chicas' : 'chicos'}.`);
+    if (sg !== group) {
+      toast(`${s.name} no puede ir a habitación de ${group === 'girls' ? 'chicas' : 'chicos'}.`, 'error');
       return;
     }
     removeFromAll(selected);
     rooms[group][idx].students.push(selected);
   } else {
-    // pool — devolver al pool sin asignar
+    if (sg !== group) return; // wrong pool
     removeFromAll(selected);
   }
-
   selected = null;
+  markDirty();
   render();
 }
 
@@ -720,144 +1367,458 @@ function onDragOver(e) {
   e.preventDefault();
   e.currentTarget.classList.add('drop-target');
 }
-
 function onDragLeave(e) {
   e.currentTarget.classList.remove('drop-target');
 }
-
 function onDrop(e, type, group, idx) {
-  e.preventDefault();
-  e.stopPropagation();
+  e.preventDefault(); e.stopPropagation();
   e.currentTarget.classList.remove('drop-target');
-
   const id = parseInt(e.dataTransfer.getData('text/plain') || dragging);
   if (!id) return;
-
   const s = byId(id);
   if (!s) return;
-
-  if (type === 'room' && sexGroup(s) !== group) {
-    showToast(`${s.name} no puede ir a habitación de ${group === 'girls' ? 'chicas' : 'chicos'}.`);
+  if (sexGroup(s) !== group) {
+    toast(`${s.name} no puede ir a esa zona.`, 'error');
     return;
   }
-
   removeFromAll(id);
   if (type === 'room') rooms[group][idx].students.push(id);
-
+  markDirty();
   render();
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 //  TOAST
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 let _toastTimer;
-function showToast(msg) {
-  const t = document.getElementById('toast');
+function toast(msg, type = '') {
+  const t = $('toast');
   t.textContent = msg;
+  t.className = type;
   t.style.display = 'block';
   clearTimeout(_toastTimer);
   _toastTimer = setTimeout(() => { t.style.display = 'none'; }, 3200);
 }
 
-// ═══════════════════════════════════════════════════════
-//  BORRADORES (localStorage)
-// ═══════════════════════════════════════════════════════
-const STORAGE_KEY = 'fdc_habitaciones_v1';
-
-function loadDraftsFromStorage() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
-  catch { return []; }
+// ═══════════════════════════════════════════════════════════════
+//  STORAGE
+// ═══════════════════════════════════════════════════════════════
+function loadDrafts() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+}
+function saveDrafts(arr) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
 }
 
-function saveDraftsToStorage(drafts) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(drafts));
+// ═══════════════════════════════════════════════════════════════
+//  MODAL HELPERS
+// ═══════════════════════════════════════════════════════════════
+function openModal(id) { $(id).classList.add('open'); }
+function closeModal(id) { $(id).classList.remove('open'); }
+function maybeClose(e, id) { if (e.target === $(id)) closeModal(id); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.overlay.open').forEach(o => o.classList.remove('open'));
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════
+//  NEW / START
+// ═══════════════════════════════════════════════════════════════
+function openNewModal() {
+  renderNewDraftsList();
+  openModal('newOverlay');
 }
 
-function saveDraft() {
-  const defaultName = `Borrador ${new Date().toLocaleDateString('es-ES', {day: '2-digit', month: '2-digit', year: 'numeric'})}`;
-  const name = prompt('Nombre del borrador:', defaultName);
-  if (name === null) return; // cancelado
-
-  const draft = {
-    id:    Date.now(),
-    name:  name.trim() || defaultName,
-    date:  new Date().toISOString(),
-    rooms: clone(rooms),
-  };
-
-  saveDraftsToStorage([draft, ...loadDraftsFromStorage()]);
-  showToast(`Borrador "${draft.name}" guardado.`);
-}
-
-function openModal() {
-  renderDraftList();
-  document.getElementById('overlay').classList.add('open');
-}
-
-function closeModal() {
-  document.getElementById('overlay').classList.remove('open');
-}
-
-function maybeCloseModal(e) {
-  if (e.target === document.getElementById('overlay')) closeModal();
-}
-
-function renderDraftList() {
-  const drafts = loadDraftsFromStorage();
-  const list   = document.getElementById('draft-list');
-
+function renderNewDraftsList() {
+  const drafts = loadDrafts();
+  const section = $('newDraftsSection');
+  const list = $('newDraftsList');
   if (drafts.length === 0) {
-    list.innerHTML = '<div class="empty-state">No hay borradores guardados todavía.<br>Asigna alumnos y pulsa "Guardar".</div>';
+    section.style.display = 'none';
     return;
   }
-
+  section.style.display = 'block';
   list.innerHTML = '';
-  drafts.forEach(draft => {
-    const total = ['girls', 'boys'].reduce((acc, g) =>
-      acc + draft.rooms[g].reduce((a, r) => a + r.students.length, 0), 0);
-
-    const item = document.createElement('div');
-    item.className = 'draft-item';
-    item.innerHTML =
-      `<div style="flex:1;min-width:0">` +
-        `<div class="draft-name">${escHtml(draft.name)}</div>` +
-        `<div class="draft-meta">${new Date(draft.date).toLocaleString('es-ES')} &nbsp;·&nbsp; ${total} asignados</div>` +
-      `</div>` +
-      `<button class="btn btn-primary btn-sm" onclick="loadDraft(${draft.id})">Cargar</button>` +
-      `<button class="btn btn-danger btn-sm" onclick="deleteDraft(${draft.id})">&#x2715;</button>`;
-
-    list.appendChild(item);
-  });
+  drafts.forEach(d => list.appendChild(draftItem(d, /*forNew=*/true)));
 }
 
-function loadDraft(id) {
-  const draft = loadDraftsFromStorage().find(d => d.id === id);
-  if (!draft) return;
-  if (!confirm(`¿Cargar "${draft.name}"?\nLos cambios actuales no guardados se perderán.`)) return;
-
-  rooms    = clone(draft.rooms);
+function newBlank() {
+  if (dirty && !confirm('Tienes cambios sin guardar. ¿Empezar uno nuevo de cero?')) return;
+  rooms = emptyRooms();
+  currentDraftId = null;
+  currentDraftName = null;
+  dirty = false;
   selected = null;
-  closeModal();
+  closeModal('newOverlay');
   render();
-  showToast(`Borrador "${draft.name}" cargado.`);
+  toast('Nuevo reparto en blanco.');
+}
+
+function newFromDraft(id) {
+  const d = loadDrafts().find(x => x.id === id);
+  if (!d) return;
+  if (dirty && !confirm('Tienes cambios sin guardar. ¿Crear uno nuevo partiendo de este borrador?')) return;
+  rooms = clone(d.rooms);
+  currentDraftId = null;     // it's a new working copy, not the original
+  currentDraftName = d.name + ' (copia)';
+  dirty = true;              // counts as unsaved since it's a fork
+  selected = null;
+  closeModal('newOverlay');
+  render();
+  toast(`Partiendo de "${d.name}"`);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  DRAFTS MODAL
+// ═══════════════════════════════════════════════════════════════
+function openDraftsModal() {
+  renderDraftsList();
+  openModal('draftsOverlay');
+}
+
+function draftItem(d, forNew = false) {
+  const total = ['girls','boys'].reduce((acc,g) => acc + d.rooms[g].reduce((a,r) => a + r.students.length, 0), 0);
+  const isCurrent = !forNew && d.id === currentDraftId;
+  const item = document.createElement('div');
+  item.className = 'draft-item' + (isCurrent ? ' current' : '');
+
+  const date = new Date(d.date);
+  const dateStr = date.toLocaleDateString('es-ES', {day:'2-digit', month:'short'}) +
+                  ' · ' + date.toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'});
+
+  item.innerHTML = `
+    <div class="draft-icon ${isCurrent ? 'current' : ''}">${escHtml(initial(d.name))}</div>
+    <div class="draft-info">
+      <div class="draft-name">${escHtml(d.name)}${isCurrent ? ' · actual' : ''}</div>
+      <div class="draft-meta">
+        <span>${dateStr}</span>
+        <span class="draft-meta-dot"></span>
+        <span>${total} asignados</span>
+      </div>
+    </div>
+    <div class="draft-actions"></div>
+  `;
+  const actions = item.querySelector('.draft-actions');
+
+  if (forNew) {
+    const useBtn = document.createElement('button');
+    useBtn.className = 'btn btn-primary btn-sm';
+    useBtn.textContent = 'Usar';
+    useBtn.onclick = () => newFromDraft(d.id);
+    actions.append(useBtn);
+  } else {
+    const loadBtn = document.createElement('button');
+    loadBtn.className = 'btn btn-primary btn-sm';
+    loadBtn.textContent = 'Abrir';
+    loadBtn.onclick = () => openDraft(d.id);
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'btn btn-danger btn-sm';
+    delBtn.title = 'Eliminar';
+    delBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/></svg>';
+    delBtn.onclick = () => deleteDraft(d.id);
+
+    actions.append(loadBtn, delBtn);
+  }
+
+  return item;
+}
+
+function renderDraftsList() {
+  const drafts = loadDrafts();
+  const list = $('draftsList');
+  if (drafts.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v13a1 1 0 001 1h16a1 1 0 001-1V9a1 1 0 00-1-1h-9l-2-3H4a1 1 0 00-1 1v1z"/></svg>
+        </div>
+        <h3>Sin borradores</h3>
+        <p>Cuando guardes un reparto aparecerá aquí.</p>
+      </div>`;
+    return;
+  }
+  list.innerHTML = '';
+  drafts.forEach(d => list.appendChild(draftItem(d, false)));
+}
+
+function openDraft(id) {
+  const d = loadDrafts().find(x => x.id === id);
+  if (!d) return;
+  if (dirty && !confirm('Tienes cambios sin guardar. ¿Cargar este borrador y descartar cambios?')) return;
+  rooms = clone(d.rooms);
+  currentDraftId = d.id;
+  currentDraftName = d.name;
+  dirty = false;
+  selected = null;
+  closeModal('draftsOverlay');
+  render();
+  toast(`"${d.name}" cargado.`, 'success');
 }
 
 function deleteDraft(id) {
-  const draft = loadDraftsFromStorage().find(d => d.id === id);
-  if (!draft || !confirm(`¿Eliminar el borrador "${draft.name}"?`)) return;
-
-  saveDraftsToStorage(loadDraftsFromStorage().filter(d => d.id !== id));
-  renderDraftList();
+  const d = loadDrafts().find(x => x.id === id);
+  if (!d || !confirm(`¿Eliminar el borrador "${d.name}"?`)) return;
+  saveDrafts(loadDrafts().filter(x => x.id !== id));
+  if (currentDraftId === id) { currentDraftId = null; currentDraftName = null; }
+  renderDraftsList();
+  updateDraftLabel();
+  toast('Borrador eliminado.');
 }
 
-function escHtml(str) {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+// ═══════════════════════════════════════════════════════════════
+//  SAVE
+// ═══════════════════════════════════════════════════════════════
+function saveCurrent() {
+  $('saveNameInput').value = currentDraftName || `Reparto ${new Date().toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'})}`;
+  $('saveHint').textContent = currentDraftId
+    ? 'Si mantienes el mismo nombre, se sobrescribe el borrador actual.'
+    : 'Se guardará como nuevo borrador.';
+  openModal('saveOverlay');
+  setTimeout(() => { $('saveNameInput').select(); }, 100);
 }
 
-// ═══════════════════════════════════════════════════════
-//  ARRANQUE
-// ═══════════════════════════════════════════════════════
+function confirmSave() {
+  const name = $('saveNameInput').value.trim();
+  if (!name) { toast('Pon un nombre.', 'error'); return; }
+
+  const drafts = loadDrafts();
+  const now = new Date().toISOString();
+
+  // If editing existing and name unchanged → update in place
+  if (currentDraftId && currentDraftName === name) {
+    const idx = drafts.findIndex(d => d.id === currentDraftId);
+    if (idx >= 0) {
+      drafts[idx] = {...drafts[idx], rooms: clone(rooms), date: now};
+      saveDrafts(drafts);
+      dirty = false;
+      closeModal('saveOverlay');
+      render();
+      toast(`"${name}" actualizado.`, 'success');
+      return;
+    }
+  }
+
+  // Otherwise create new
+  const draft = { id: Date.now(), name, date: now, rooms: clone(rooms) };
+  saveDrafts([draft, ...drafts]);
+  currentDraftId = draft.id;
+  currentDraftName = name;
+  dirty = false;
+  closeModal('saveOverlay');
+  render();
+  toast(`"${name}" guardado.`, 'success');
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SHARE / EXPORT
+// ═══════════════════════════════════════════════════════════════
+function buildExportStage() {
+  const stage = $('exportStage');
+  const total = STUDENTS.length;
+  const assigned = assignedSet().size;
+  const unassigned = total - assigned;
+  const dateStr = new Date().toLocaleDateString('es-ES', {day:'numeric', month:'long', year:'numeric'});
+
+  const colHTML = group => {
+    const groupLabel = group === 'girls' ? 'Chicas' : 'Chicos';
+    const iconSvg = group === 'girls'
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M12 12v8M9 17h6"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="14" r="6"/><path d="M14 10l6-6M14 4h6v6"/></svg>';
+
+    let roomsHTML = '';
+    rooms[group].forEach((room, idx) => {
+      let studentsHTML = '';
+      if (room.students.length === 0) {
+        studentsHTML = '<div class="export-empty">— vacía —</div>';
+      } else {
+        room.students.forEach(id => {
+          const s = byId(id);
+          if (!s) return;
+          studentsHTML += `
+            <div class="export-student">
+              <div class="export-student-bullet">${escHtml(initial(s.name))}</div>
+              <span>${escHtml(s.name)}</span>
+              ${s.doubt ? '<span class="export-student-doubt">EN DUDA</span>' : ''}
+              <span class="export-student-class">${escHtml(s.clase)}</span>
+            </div>`;
+        });
+      }
+      roomsHTML += `
+        <div class="export-room ${group}">
+          <div class="export-room-head">
+            <div class="export-room-num">${idx + 1}</div>
+            <div class="export-room-name">${escHtml(room.name)}</div>
+            <div class="export-room-count">${room.students.length}</div>
+          </div>
+          <div class="export-students">${studentsHTML}</div>
+        </div>`;
+    });
+
+    return `
+      <div class="export-col ${group}">
+        <div class="export-col-title">
+          <div class="export-col-title-icon">${iconSvg}</div>
+          ${groupLabel}
+        </div>
+        ${roomsHTML}
+      </div>`;
+  };
+
+  const unassignedHTML = unassigned > 0
+    ? `<div class="export-unassigned">
+         <strong>${unassigned} ${unassigned === 1 ? 'alumno sin asignar' : 'alumnos sin asignar'}:</strong>
+         ${STUDENTS.filter(s => !assignedSet().has(s.id)).map(s => escHtml(s.name) + (s.doubt ? ' (?)' : '')).join(', ')}
+       </div>`
+    : '';
+
+  stage.innerHTML = `
+    <div class="export-header">
+      <div class="export-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1h-5v-7H9v7H4a1 1 0 01-1-1V9.5z"/>
+        </svg>
+      </div>
+      <div class="export-title">
+        <h1>${escHtml(currentDraftName || 'Reparto de habitaciones')}</h1>
+        <p>Viaje de Fin de Curso · 6.º Primaria · ${dateStr}</p>
+      </div>
+      <div class="export-stats">
+        <div class="export-stat">${assigned} / ${total} asignados</div>
+      </div>
+    </div>
+    <div class="export-columns">
+      ${colHTML('girls')}
+      ${colHTML('boys')}
+    </div>
+    ${unassignedHTML}
+    <div class="export-footer">
+      <span>Generado con Habitaciones · Fin de Curso</span>
+      <span>${new Date().toLocaleString('es-ES')}</span>
+    </div>
+  `;
+}
+
+async function generateImage() {
+  buildExportStage();
+  // Wait a tick so layout / fonts are applied
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+  const stage = $('exportStage');
+  const canvas = await html2canvas(stage, {
+    backgroundColor: '#ffffff',
+    scale: 2,
+    useCORS: true,
+    logging: false,
+    windowWidth: 1000,
+  });
+  return canvas;
+}
+
+async function canvasToBlob(canvas) {
+  return new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+}
+
+function openShareModal() {
+  // Show native share button only if supported
+  $('shareNativeBtn').style.display = (navigator.share) ? 'flex' : 'none';
+  openModal('shareOverlay');
+}
+
+async function shareNative() {
+  if (!navigator.share) { toast('Compartir nativo no disponible.', 'error'); return; }
+  toast('Generando imagen...');
+  try {
+    const canvas = await generateImage();
+    const blob = await canvasToBlob(canvas);
+    const file = new File([blob], 'habitaciones.png', { type: 'image/png' });
+    const payload = { text: SHARE_MESSAGE, files: [file], title: 'Reparto de habitaciones' };
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share(payload);
+    } else {
+      await navigator.share({ text: SHARE_MESSAGE, title: 'Reparto de habitaciones' });
+    }
+  } catch (err) {
+    if (err.name !== 'AbortError') toast('No se pudo compartir: ' + err.message, 'error');
+  }
+}
+
+async function shareWhatsapp() {
+  toast('Generando imagen...');
+  try {
+    const canvas = await generateImage();
+    // Trigger download
+    const link = document.createElement('a');
+    link.download = 'habitaciones.png';
+    link.href = canvas.toDataURL('image/png');
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    // Open WhatsApp with the message
+    setTimeout(() => {
+      window.open('https://wa.me/?text=' + encodeURIComponent(SHARE_MESSAGE), '_blank');
+      toast('Imagen descargada. Adjúntala en el chat de WhatsApp.', 'success');
+    }, 400);
+  } catch (err) {
+    toast('Error al generar: ' + err.message, 'error');
+  }
+}
+
+async function downloadImage() {
+  toast('Generando imagen...');
+  try {
+    const canvas = await generateImage();
+    const link = document.createElement('a');
+    const date = new Date().toISOString().slice(0,10);
+    const safeName = (currentDraftName || 'reparto').replace(/[^a-z0-9áéíóúñ\- ]/gi,'').replace(/\s+/g,'-').toLowerCase();
+    link.download = `habitaciones-${safeName}-${date}.png`;
+    link.href = canvas.toDataURL('image/png');
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    toast('Imagen descargada.', 'success');
+  } catch (err) {
+    toast('Error: ' + err.message, 'error');
+  }
+}
+
+async function copyImage() {
+  if (!navigator.clipboard || !window.ClipboardItem) {
+    toast('Tu navegador no soporta copiar imágenes.', 'error');
+    return;
+  }
+  toast('Generando imagen...');
+  try {
+    const canvas = await generateImage();
+    const blob = await canvasToBlob(canvas);
+    await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+    toast('Imagen copiada al portapapeles.', 'success');
+  } catch (err) {
+    toast('No se pudo copiar: ' + err.message, 'error');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  WARN ON LEAVE
+// ═══════════════════════════════════════════════════════════════
+window.addEventListener('beforeunload', e => {
+  if (dirty) { e.preventDefault(); e.returnValue = ''; }
+});
+
+// ═══════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════
 render();
+// If there are saved drafts, open the "new" modal at startup so user can pick
+if (loadDrafts().length > 0) {
+  openNewModal();
+}
 </script>
 </body>
 </html>
