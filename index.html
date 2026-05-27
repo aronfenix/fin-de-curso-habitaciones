@@ -238,6 +238,44 @@
     .hint.visible { display: flex; }
     .hint svg { width: 16px; height: 16px; color: var(--accent); flex-shrink: 0; }
 
+    /* Shared-link banner */
+    .banner {
+      background: linear-gradient(135deg, #fef3c7 0%, #fce7f3 100%);
+      border: 1px solid #fcd34d;
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      display: none; align-items: center; gap: 12px;
+    }
+    .banner.visible { display: flex; }
+    .banner-icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: white;
+      display: grid; place-items: center;
+      color: #d97706;
+      flex-shrink: 0;
+    }
+    .banner-icon svg { width: 18px; height: 18px; }
+    .banner-text { flex: 1; min-width: 0; font-size: 0.85rem; color: #78350f; line-height: 1.4; }
+    .banner-text strong { color: #451a03; }
+    .banner-close {
+      border: none; background: transparent;
+      padding: 6px; border-radius: 8px;
+      cursor: pointer; color: #92400e;
+      display: grid; place-items: center;
+    }
+    .banner-close:hover { background: rgba(120,53,15,.1); }
+    .banner-close svg { width: 16px; height: 16px; }
+
+    /* Share sections */
+    .share-section-label {
+      font-size: 0.72rem; font-weight: 700; color: var(--ink-500);
+      text-transform: uppercase; letter-spacing: 0.06em;
+      margin: 14px 0 8px;
+    }
+    .share-section-label:first-child { margin-top: 0; }
+    .share-actions.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+
     /* ── POOL ───────────────────────────────────────── */
     .pool {
       background: var(--surface);
@@ -879,6 +917,20 @@
     </button>
   </div>
 
+  <!-- SHARED BANNER -->
+  <div class="banner" id="sharedBanner">
+    <div class="banner-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+    </div>
+    <div class="banner-text">
+      <strong id="sharedBannerTitle">Te han compartido un reparto</strong><br>
+      <span>Modifícalo, guárdalo como tuyo o empieza el tuyo de cero con el botón <strong>Nuevo</strong>.</span>
+    </div>
+    <button class="banner-close" onclick="closeSharedBanner()" title="Cerrar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+
   <!-- HINT -->
   <div class="hint" id="hint">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
@@ -1017,28 +1069,40 @@
       </button>
     </div>
     <div class="modal-body">
-      <p style="font-size:.85rem;color:var(--ink-700);margin-bottom:14px;line-height:1.5">
-        Se generará una imagen con el reparto actual y el mensaje:<br>
+      <p style="font-size:.85rem;color:var(--ink-700);margin-bottom:12px;line-height:1.5">
+        Envía un <strong>enlace</strong> para que vean tu reparto interactivo en el navegador y puedan hacer el suyo. El mensaje incluirá:<br>
         <em style="color:var(--ink-500);font-size:.78rem">"He creado este reparto de habitaciones para el viaje. ¿Quieres hacer el tuyo y demostrarme que sabes más que yo de los alumnos?"</em>
       </p>
-      <div class="share-actions">
-        <button class="share-btn native" onclick="shareNative()" id="shareNativeBtn" style="display:none">
-          <div class="share-btn-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
-          </div>
-          <div class="share-btn-text">Compartir...</div>
-        </button>
-        <button class="share-btn whatsapp" onclick="shareWhatsapp()">
+
+      <div class="share-section-label">Enviar enlace</div>
+      <div class="share-actions cols-3">
+        <button class="share-btn whatsapp" onclick="shareLinkWhatsapp()">
           <div class="share-btn-icon">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-1-.3-.1-.5-.1-.7.2-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.5-1.7-1.6-2-.2-.3 0-.4.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.3 5.1 4.6.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.5-.3zM12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.6 1.4 5.2L2 22l4.9-1.3c1.5.8 3.3 1.3 5.1 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
           </div>
           <div class="share-btn-text">WhatsApp</div>
         </button>
+        <button class="share-btn copy" onclick="copyLink()">
+          <div class="share-btn-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.5.5l3-3a5 5 0 00-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 00-7.5-.5l-3 3a5 5 0 007 7l1.7-1.7"/></svg>
+          </div>
+          <div class="share-btn-text">Copiar enlace</div>
+        </button>
+        <button class="share-btn native" onclick="shareLinkNative()" id="shareNativeBtn" style="display:none">
+          <div class="share-btn-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+          </div>
+          <div class="share-btn-text">Compartir...</div>
+        </button>
+      </div>
+
+      <div class="share-section-label">O como imagen</div>
+      <div class="share-actions">
         <button class="share-btn image" onclick="downloadImage()">
           <div class="share-btn-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
           </div>
-          <div class="share-btn-text">Descargar imagen</div>
+          <div class="share-btn-text">Descargar PNG</div>
         </button>
         <button class="share-btn copy" onclick="copyImage()">
           <div class="share-btn-icon">
@@ -1139,6 +1203,7 @@ const STUDENTS = [
 
 const SHARE_MESSAGE = "He creado este reparto de habitaciones para el viaje. ¿Quieres hacer el tuyo y demostrarme que sabes más que yo de los alumnos?";
 const STORAGE_KEY = 'fdc_habitaciones_v2';
+const PUBLIC_URL  = 'https://aronfenix.github.io/fin-de-curso-habitaciones/';
 
 // ═══════════════════════════════════════════════════════════════
 //  STATE
@@ -1726,47 +1791,117 @@ async function canvasToBlob(canvas) {
 }
 
 function openShareModal() {
-  // Show native share button only if supported
   $('shareNativeBtn').style.display = (navigator.share) ? 'flex' : 'none';
   openModal('shareOverlay');
 }
 
-async function shareNative() {
-  if (!navigator.share) { toast('Compartir nativo no disponible.', 'error'); return; }
-  toast('Generando imagen...');
+// ── URL ENCODING (state → shareable link) ─────────────────
+function encodeState() {
+  const data = {
+    t: currentDraftName || 'Reparto de habitaciones',
+    g: rooms.girls.map(r => [r.name, r.students]),
+    b: rooms.boys.map(r => [r.name, r.students]),
+  };
+  const json = JSON.stringify(data);
+  return btoa(unescape(encodeURIComponent(json)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function decodeState(str) {
   try {
-    const canvas = await generateImage();
-    const blob = await canvasToBlob(canvas);
-    const file = new File([blob], 'habitaciones.png', { type: 'image/png' });
-    const payload = { text: SHARE_MESSAGE, files: [file], title: 'Reparto de habitaciones' };
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share(payload);
-    } else {
-      await navigator.share({ text: SHARE_MESSAGE, title: 'Reparto de habitaciones' });
-    }
+    let b64 = str.replace(/-/g, '+').replace(/_/g, '/');
+    while (b64.length % 4) b64 += '=';
+    const json = decodeURIComponent(escape(atob(b64)));
+    return JSON.parse(json);
+  } catch { return null; }
+}
+
+function buildShareUrl() {
+  const base = (location.protocol === 'http:' || location.protocol === 'https:')
+    ? location.origin + location.pathname
+    : PUBLIC_URL;
+  return base + '#r=' + encodeState();
+}
+
+function buildShareMessage() {
+  return SHARE_MESSAGE + '\n\n' + buildShareUrl();
+}
+
+// ── LINK SHARING ─────────────────────────────────────────
+function shareLinkWhatsapp() {
+  const text = buildShareMessage();
+  window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+  toast('Abriendo WhatsApp...', 'success');
+  closeModal('shareOverlay');
+}
+
+async function copyLink() {
+  const text = buildShareMessage();
+  try {
+    await navigator.clipboard.writeText(text);
+    toast('Enlace copiado al portapapeles.', 'success');
+    closeModal('shareOverlay');
+  } catch {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); toast('Enlace copiado.', 'success'); }
+    catch { toast('No se pudo copiar. El enlace está abierto en otra ventana.', 'error'); window.prompt('Copia este enlace:', text); }
+    ta.remove();
+    closeModal('shareOverlay');
+  }
+}
+
+async function shareLinkNative() {
+  if (!navigator.share) { toast('Compartir nativo no disponible.', 'error'); return; }
+  try {
+    await navigator.share({
+      title: 'Reparto de habitaciones',
+      text: SHARE_MESSAGE,
+      url: buildShareUrl(),
+    });
+    closeModal('shareOverlay');
   } catch (err) {
     if (err.name !== 'AbortError') toast('No se pudo compartir: ' + err.message, 'error');
   }
 }
 
-async function shareWhatsapp() {
-  toast('Generando imagen...');
+// ── SHARED-LINK BANNER ───────────────────────────────────
+function closeSharedBanner() {
+  $('sharedBanner').classList.remove('visible');
+}
+
+function tryLoadFromHash() {
+  const hash = location.hash || '';
+  if (!hash.startsWith('#r=')) return false;
+  const data = decodeState(hash.slice(3));
+  if (!data || !data.g || !data.b) return false;
+
   try {
-    const canvas = await generateImage();
-    // Trigger download
-    const link = document.createElement('a');
-    link.download = 'habitaciones.png';
-    link.href = canvas.toDataURL('image/png');
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    // Open WhatsApp with the message
-    setTimeout(() => {
-      window.open('https://wa.me/?text=' + encodeURIComponent(SHARE_MESSAGE), '_blank');
-      toast('Imagen descargada. Adjúntala en el chat de WhatsApp.', 'success');
-    }, 400);
-  } catch (err) {
-    toast('Error al generar: ' + err.message, 'error');
+    rooms = {
+      girls: data.g.map(([n, s]) => ({ name: n, students: Array.isArray(s) ? s : [] })),
+      boys:  data.b.map(([n, s]) => ({ name: n, students: Array.isArray(s) ? s : [] })),
+    };
+    // Ensure exactly 3 rooms per side
+    while (rooms.girls.length < 3) rooms.girls.push({name: `Habitación Chicas ${rooms.girls.length+1}`, students: []});
+    while (rooms.boys.length  < 3) rooms.boys.push({name: `Habitación Chicos ${rooms.boys.length+1}`, students: []});
+    rooms.girls = rooms.girls.slice(0, 3);
+    rooms.boys  = rooms.boys.slice(0, 3);
+
+    currentDraftId = null;
+    currentDraftName = (data.t || 'Reparto recibido') + ' (recibido)';
+    dirty = false;
+
+    $('sharedBannerTitle').textContent = `Reparto recibido: "${data.t || 'sin título'}"`;
+    $('sharedBanner').classList.add('visible');
+
+    // Clean URL so refreshing doesn't keep loading shared state
+    history.replaceState(null, '', location.pathname + location.search);
+    return true;
+  } catch {
+    return false;
   }
 }
 
@@ -1814,9 +1949,10 @@ window.addEventListener('beforeunload', e => {
 // ═══════════════════════════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════════════════════════
+const loadedFromHash = tryLoadFromHash();
 render();
-// If there are saved drafts, open the "new" modal at startup so user can pick
-if (loadDrafts().length > 0) {
+// If no shared link was loaded and there are saved drafts, open the "new" modal at startup
+if (!loadedFromHash && loadDrafts().length > 0) {
   openNewModal();
 }
 </script>
