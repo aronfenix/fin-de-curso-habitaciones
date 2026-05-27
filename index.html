@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grupos de Habitaciones — Fin de Curso</title>
+  <style>
+    :root {
+      --girl: #c2185b;
+      --girl-bg: #fce4ec;
+      --girl-border: #f48fb1;
+      --boy: #1565c0;
+      --boy-bg: #e3f2fd;
+      --boy-border: #90caf9;
+      --doubt: #f59e0b;
+      --accent: #4f46e5;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #f1f5f9;
+      min-height: 100vh;
+      color: #1e293b;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      background: white;
+      padding: 0 20px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .header-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      flex: 1;
+    }
+
+    .header-title small {
+      display: block;
+      font-size: 0.68rem;
+      font-weight: 400;
+      color: #64748b;
+    }
+
+    .stats {
+      display: flex;
+      gap: 14px;
+      font-size: 0.78rem;
+      color: #64748b;
+    }
+
+    .stats strong { color: #1e293b; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: filter 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    .btn:hover  { filter: brightness(0.9); }
+    .btn:active { filter: brightness(0.82); transform: scale(0.96); }
+
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-outline  { background: white; color: var(--accent); border: 2px solid var(--accent); }
+    .btn-danger   { background: #ef4444; color: white; }
+    .btn-sm       { padding: 4px 10px; font-size: 0.73rem; }
+
+    /* ── MAIN ── */
+    .main {
+      padding: 16px;
+      max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ── INSTRUCTION BAR ── */
+    .instruction {
+      background: #fffbeb;
+      border: 1px solid #fcd34d;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      color: #92400e;
+      display: none;
+    }
+
+    .instruction.visible { display: block; }
+
+    /* ── POOL ── */
+    .pool-section {
+      background: white;
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #94a3b8;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .pool-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .pool-zone {
+      border-radius: 10px;
+      padding: 12px;
+      min-height: 68px;
+      cursor: default;
+      transition: box-shadow 0.15s;
+    }
+
+    .pool-zone.girls { background: var(--girl-bg); border: 2px dashed var(--girl-border); }
+    .pool-zone.boys  { background: var(--boy-bg);  border: 2px dashed var(--boy-border); }
+    .pool-zone.drop-target { box-shadow: 0 0 0 3px var(--accent); }
+    .pool-zone.clickable   { cursor: pointer; }
+
+    .pool-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .pool-zone.girls .pool-label { color: var(--girl); }
+    .pool-zone.boys  .pool-label { color: var(--boy); }
+
+    /* ── CHIPS ── */
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      min-height: 30px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 11px;
+      border-radius: 20px;
+      font-size: 0.77rem;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.12s, box-shadow 0.12s;
+      white-space: nowrap;
+    }
+
+    .chip.girl { background: var(--girl); color: white; }
+    .chip.boy  { background: var(--boy);  color: white; }
+
+    .chip.doubt {
+      outline: 3px solid var(--doubt);
+      outline-offset: 2px;
+    }
+
+    .chip.selected {
+      transform: scale(1.1);
+      box-shadow: 0 0 0 3px var(--accent), 0 4px 14px rgba(0,0,0,0.25);
+    }
+
+    .chip:hover:not(.selected) { transform: scale(1.05); }
+    .chip:active { transform: scale(0.97); }
+
+    .chip-class {
+      font-size: 0.65rem;
+      opacity: 0.75;
+    }
+
+    .chip-doubt {
+      background: var(--doubt);
+      color: white;
+      border-radius: 4px;
+      font-size: 0.6rem;
+      padding: 1px 4px;
+      font-weight: 700;
+    }
+
+    /* ── ROOMS ── */
+    .rooms-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .rooms-group {
+      background: white;
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+
+    .group-title {
+      font-size: 1rem;
+      font-weight: 700;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      border-bottom: 3px solid;
+    }
+
+    .rooms-group.girls .group-title { color: var(--girl); border-color: var(--girl); }
+    .rooms-group.boys  .group-title { color: var(--boy);  border-color: var(--boy); }
+
+    .room-card {
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 10px;
+      transition: box-shadow 0.15s;
+    }
+
+    .room-card.girls { background: var(--girl-bg); border: 2px solid var(--girl-border); }
+    .room-card.boys  { background: var(--boy-bg);  border: 2px solid var(--boy-border); }
+    .room-card.drop-target { box-shadow: 0 0 0 3px var(--accent); }
+    .room-card.clickable   { cursor: pointer; }
+
+    .room-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .room-name-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: inherit;
+      padding: 3px 6px;
+      border-radius: 6px;
+      cursor: text;
+      min-width: 0;
+    }
+
+    .room-name-input:focus {
+      background: white;
+      outline: 2px solid var(--accent);
+    }
+
+    .room-count {
+      font-size: 0.72rem;
+      background: rgba(255,255,255,0.8);
+      padding: 2px 8px;
+      border-radius: 10px;
+      color: #64748b;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .room-clear {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: none;
+      background: rgba(239,68,68,0.12);
+      color: #ef4444;
+      cursor: pointer;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .room-clear:hover { background: rgba(239,68,68,0.22); }
+
+    /* ── MODAL ── */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.55);
+      z-index: 50;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .overlay.open { display: flex; }
+
+    .modal {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      width: 100%;
+      max-width: 500px;
+      max-height: 82vh;
+      overflow-y: auto;
+    }
+
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .draft-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 2px solid #e2e8f0;
+      margin-bottom: 8px;
+      transition: border-color 0.15s;
+    }
+
+    .draft-item:hover { border-color: var(--accent); }
+
+    .draft-name { font-weight: 600; font-size: 0.88rem; }
+    .draft-meta { font-size: 0.72rem; color: #94a3b8; margin-top: 2px; }
+
+    .empty-state {
+      text-align: center;
+      color: #94a3b8;
+      padding: 28px;
+      font-size: 0.88rem;
+    }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e293b;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      z-index: 200;
+      max-width: 90vw;
+      text-align: center;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+      display: none;
+    }
+
+    /* ── LEGEND ── */
+    .legend {
+      display: flex;
+      gap: 16px;
+      font-size: 0.75rem;
+      color: #64748b;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      .pool-grid   { grid-template-columns: 1fr; }
+      .rooms-grid  { grid-template-columns: 1fr; }
+      .stats       { display: none; }
+      .header-title small { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-title">
+    Habitaciones — Fin de Curso
+    <small>6.º Primaria · 3 hab. chicas + 3 hab. chicos</small>
+  </div>
+  <div class="stats" id="stats"></div>
+  <button class="btn btn-outline" onclick="openModal()">📂 Borradores</button>
+  <button class="btn btn-primary" onclick="saveDraft()">💾 Guardar</button>
+</header>
+
+<div class="main">
+  <div class="instruction" id="instruction"></div>
+
+  <!-- Pool de alumnos sin asignar -->
+  <div class="pool-section">
+    <div class="section-label">Alumnos sin asignar — pulsa un alumno para seleccionarlo, luego pulsa la habitación de destino</div>
+    <div class="pool-grid">
+      <div class="pool-zone girls" id="pool-girls"
+           onclick="onClickZone('pool','girls')"
+           ondrop="onDrop(event,'pool','girls')"
+           ondragover="onDragOver(event)"
+           ondragleave="onDragLeave(event)">
+        <div class="pool-label">Chicas (<span id="cnt-pool-girls">0</span>)</div>
+        <div class="chips" id="chips-pool-girls"></div>
+      </div>
+      <div class="pool-zone boys" id="pool-boys"
+           onclick="onClickZone('pool','boys')"
+           ondrop="onDrop(event,'pool','boys')"
+           ondragover="onDragOver(event)"
+           ondragleave="onDragLeave(event)">
+        <div class="pool-label">Chicos (<span id="cnt-pool-boys">0</span>)</div>
+        <div class="chips" id="chips-pool-boys"></div>
+      </div>
+    </div>
+    <div class="legend" style="margin-top:10px">
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--girl)"></div> Chica confirmada
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--boy)"></div> Chico confirmado
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--girl);outline:2px solid var(--doubt);outline-offset:1px"></div>
+        En duda (Alison / Emanuel)
+      </div>
+    </div>
+  </div>
+
+  <!-- Habitaciones -->
+  <div class="rooms-grid">
+    <div class="rooms-group girls">
+      <div class="group-title">🩷 Habitaciones Chicas</div>
+      <div id="rooms-girls"></div>
+    </div>
+    <div class="rooms-group boys">
+      <div class="group-title">💙 Habitaciones Chicos</div>
+      <div id="rooms-boys"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal borradores -->
+<div class="overlay" id="overlay" onclick="maybeCloseModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-title">📂 Borradores guardados</div>
+    <div id="draft-list"></div>
+    <button class="btn btn-outline" style="width:100%;margin-top:10px" onclick="closeModal()">Cerrar</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  DATOS
+// ═══════════════════════════════════════════════════════
+const STUDENTS = [
+  {id: 1,  name: "Elena",            clase: "6.º A", sex: "girl"},
+  {id: 2,  name: "Martín García",    clase: "6.º A", sex: "boy"},
+  {id: 3,  name: "Rami",             clase: "6.º A", sex: "boy"},
+  {id: 4,  name: "Martín Jiménez",   clase: "6.º A", sex: "boy"},
+  {id: 5,  name: "Nikko",            clase: "6.º A", sex: "boy"},
+  {id: 6,  name: "Carolina Valiente",clase: "6.º B", sex: "girl"},
+  {id: 7,  name: "Elkin",            clase: "6.º A", sex: "boy"},
+  {id: 8,  name: "Mateo",            clase: "6.º B", sex: "boy"},
+  {id: 9,  name: "Rohan",            clase: "6.º A", sex: "boy"},
+  {id: 10, name: "María",            clase: "6.º C", sex: "girl"},
+  {id: 11, name: "Álex",             clase: "6.º B", sex: "boy"},
+  {id: 12, name: "Aitor",            clase: "6.º C", sex: "boy"},
+  {id: 13, name: "Candela",          clase: "6.º C", sex: "girl"},
+  {id: 14, name: "Lucas",            clase: "6.º C", sex: "boy"},
+  {id: 15, name: "Mohamed",          clase: "6.º B", sex: "boy"},
+  {id: 16, name: "Ainhoa",           clase: "6.º B", sex: "girl"},
+  {id: 17, name: "Eric C",           clase: "6.º C", sex: "boy"},
+  {id: 18, name: "Alba",             clase: "6.º B", sex: "girl"},
+  {id: 19, name: "Liam",             clase: "6.º A", sex: "boy"},
+  {id: 20, name: "Mathias Pacheco",  clase: "6.º C", sex: "boy"},
+  {id: 21, name: "Yeva",             clase: "6.º B", sex: "girl"},
+  {id: 22, name: "Sara",             clase: "6.º B", sex: "girl"},
+  {id: 23, name: "Diego",            clase: "6.º C", sex: "boy"},
+  {id: 24, name: "Ángela",           clase: "6.º A", sex: "girl"},
+  {id: 25, name: "Houda",            clase: "6.º C", sex: "girl"},
+  {id: 26, name: "Sofía",            clase: "6.º B", sex: "girl"},
+  {id: 27, name: "Elissiany",        clase: "6.º C", sex: "girl"},
+  {id: 28, name: "Adrián",           clase: "6.º A", sex: "boy"},
+  {id: 29, name: "Elianny",          clase: "6.º B", sex: "girl"},
+  {id: 30, name: "Eric B",           clase: "6.º B", sex: "boy"},
+  {id: 31, name: "Rayan",            clase: "6.º B", sex: "boy"},
+  {id: 32, name: "Mathias Pisco",    clase: "6.º C", sex: "boy"},
+  {id: 33, name: "Anthony",          clase: "6.º A", sex: "boy"},
+  {id: 34, name: "Bridget",          clase: "6.º C", sex: "girl"},
+  {id: 35, name: "Elimar",           clase: "6.º C", sex: "girl"},
+  {id: 36, name: "Piero",            clase: "6.º B", sex: "boy"},
+  {id: 37, name: "Cicky Beltre",     clase: "6.º A", sex: "girl"},
+  {id: 38, name: "Paola",            clase: "6.º A", sex: "girl"},
+  {id: 39, name: "Ciara",            clase: "6.º B", sex: "girl"},
+  {id: 40, name: "Mathias Muralles", clase: "6.º B", sex: "boy"},
+  {id: 41, name: "Joaquín",          clase: "6.º C", sex: "boy"},
+  {id: 42, name: "Saray",            clase: "6.º A", sex: "girl"},
+  // En duda
+  {id: 43, name: "Alison",           clase: "6.º C", sex: "girl", doubt: true},
+  {id: 44, name: "Emanuel",          clase: "6.º C", sex: "boy",  doubt: true},
+];
+
+// ═══════════════════════════════════════════════════════
+//  ESTADO
+// ═══════════════════════════════════════════════════════
+let rooms = {
+  girls: [
+    {name: "Habitación Chicas 1", students: []},
+    {name: "Habitación Chicas 2", students: []},
+    {name: "Habitación Chicas 3", students: []},
+  ],
+  boys: [
+    {name: "Habitación Chicos 1", students: []},
+    {name: "Habitación Chicos 2", students: []},
+    {name: "Habitación Chicos 3", students: []},
+  ]
+};
+
+let selected = null; // id del alumno seleccionado para click-to-move
+let dragging = null; // id del alumno siendo arrastrado
+
+// ═══════════════════════════════════════════════════════
+//  UTILIDADES
+// ═══════════════════════════════════════════════════════
+const byId = id => STUDENTS.find(s => s.id === id);
+const sexGroup = s => s.sex === 'girl' ? 'girls' : 'boys';
+const clone = obj => JSON.parse(JSON.stringify(obj));
+
+function assignedSet() {
+  const ids = new Set();
+  ['girls', 'boys'].forEach(g =>
+    rooms[g].forEach(r => r.students.forEach(id => ids.add(id)))
+  );
+  return ids;
+}
+
+function poolStudents(group) {
+  const assigned = assignedSet();
+  const sex = group === 'girls' ? 'girl' : 'boy';
+  return STUDENTS.filter(s => s.sex === sex && !assigned.has(s.id));
+}
+
+function removeFromAll(id) {
+  ['girls', 'boys'].forEach(g =>
+    rooms[g].forEach(r => { r.students = r.students.filter(x => x !== id); })
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════════════
+function makeChip(student) {
+  const chip = document.createElement('span');
+  chip.className = `chip ${student.sex}${student.doubt ? ' doubt' : ''}${selected === student.id ? ' selected' : ''}`;
+  chip.dataset.id = student.id;
+  chip.draggable = true;
+  chip.title = `${student.name} · ${student.clase}${student.doubt ? ' · En duda' : ''}`;
+
+  chip.innerHTML =
+    `${student.name}<span class="chip-class">${student.clase}</span>` +
+    (student.doubt ? '<span class="chip-doubt">?</span>' : '');
+
+  chip.addEventListener('click', e => { e.stopPropagation(); toggleSelect(student.id); });
+
+  chip.addEventListener('dragstart', e => {
+    dragging = student.id;
+    e.dataTransfer.setData('text/plain', String(student.id));
+    e.dataTransfer.effectAllowed = 'move';
+    requestAnimationFrame(() => { chip.style.opacity = '0.4'; });
+  });
+  chip.addEventListener('dragend', () => {
+    dragging = null;
+    chip.style.opacity = '';
+  });
+
+  return chip;
+}
+
+function renderPool() {
+  ['girls', 'boys'].forEach(group => {
+    const pool = poolStudents(group);
+    const chipsEl = document.getElementById(`chips-pool-${group}`);
+    const cntEl   = document.getElementById(`cnt-pool-${group}`);
+    chipsEl.innerHTML = '';
+    pool.forEach(s => chipsEl.appendChild(makeChip(s)));
+    cntEl.textContent = pool.length;
+
+    const zone = document.getElementById(`pool-${group}`);
+    zone.classList.toggle('clickable', selected !== null && sexGroup(byId(selected)) === group);
+  });
+}
+
+function renderRooms() {
+  ['girls', 'boys'].forEach(group => {
+    const container = document.getElementById(`rooms-${group}`);
+    container.innerHTML = '';
+
+    rooms[group].forEach((room, idx) => {
+      const card = document.createElement('div');
+      card.className = `room-card ${group}`;
+      if (selected !== null) card.classList.add('clickable');
+
+      card.addEventListener('click',     () => onClickZone('room', group, idx));
+      card.addEventListener('dragover',  onDragOver);
+      card.addEventListener('dragleave', onDragLeave);
+      card.addEventListener('drop',      e => onDrop(e, 'room', group, idx));
+
+      // Header
+      const header = document.createElement('div');
+      header.className = 'room-header';
+
+      const nameInput = document.createElement('input');
+      nameInput.className = 'room-name-input';
+      nameInput.value = room.name;
+      nameInput.addEventListener('change', () => { rooms[group][idx].name = nameInput.value; });
+      nameInput.addEventListener('click',  e => e.stopPropagation());
+
+      const count = document.createElement('span');
+      count.className = 'room-count';
+      count.textContent = `${room.students.length} alumno${room.students.length !== 1 ? 's' : ''}`;
+
+      const clearBtn = document.createElement('button');
+      clearBtn.className = 'room-clear';
+      clearBtn.textContent = 'Vaciar';
+      clearBtn.title = 'Devolver todos los alumnos al pool';
+      clearBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        rooms[group][idx].students = [];
+        render();
+      });
+
+      header.append(nameInput, count, clearBtn);
+
+      // Chips
+      const chipsEl = document.createElement('div');
+      chipsEl.className = 'chips';
+      room.students.forEach(id => {
+        const s = byId(id);
+        if (s) chipsEl.appendChild(makeChip(s));
+      });
+
+      card.append(header, chipsEl);
+      container.appendChild(card);
+    });
+  });
+}
+
+function renderStats() {
+  const assigned   = assignedSet().size;
+  const total      = STUDENTS.length;
+  const unassigned = total - assigned;
+  document.getElementById('stats').innerHTML =
+    `<span>&#10003; <strong>${assigned}</strong> asignados</span>` +
+    `<span>&#9723; <strong>${unassigned}</strong> sin asignar</span>`;
+}
+
+function renderInstruction() {
+  const el = document.getElementById('instruction');
+  if (selected !== null) {
+    const s = byId(selected);
+    el.textContent = `Seleccionado/a: "${s.name}" — pulsa una habitación para asignarlo/a, o el pool para devolver.`;
+    el.classList.add('visible');
+  } else {
+    el.classList.remove('visible');
+  }
+}
+
+function render() {
+  renderPool();
+  renderRooms();
+  renderStats();
+  renderInstruction();
+}
+
+// ═══════════════════════════════════════════════════════
+//  INTERACCIONES
+// ═══════════════════════════════════════════════════════
+function toggleSelect(id) {
+  selected = (selected === id) ? null : id;
+  render();
+}
+
+function onClickZone(type, group, idx) {
+  if (selected === null) return;
+
+  const s = byId(selected);
+  const studentGroup = sexGroup(s);
+
+  if (type === 'room') {
+    if (studentGroup !== group) {
+      showToast(`${s.name} es de ${studentGroup === 'girls' ? 'chicas' : 'chicos'} — no puede ir a habitación de ${group === 'girls' ? 'chicas' : 'chicos'}.`);
+      return;
+    }
+    removeFromAll(selected);
+    rooms[group][idx].students.push(selected);
+  } else {
+    // pool — devolver al pool sin asignar
+    removeFromAll(selected);
+  }
+
+  selected = null;
+  render();
+}
+
+function onDragOver(e) {
+  e.preventDefault();
+  e.currentTarget.classList.add('drop-target');
+}
+
+function onDragLeave(e) {
+  e.currentTarget.classList.remove('drop-target');
+}
+
+function onDrop(e, type, group, idx) {
+  e.preventDefault();
+  e.stopPropagation();
+  e.currentTarget.classList.remove('drop-target');
+
+  const id = parseInt(e.dataTransfer.getData('text/plain') || dragging);
+  if (!id) return;
+
+  const s = byId(id);
+  if (!s) return;
+
+  if (type === 'room' && sexGroup(s) !== group) {
+    showToast(`${s.name} no puede ir a habitación de ${group === 'girls' ? 'chicas' : 'chicos'}.`);
+    return;
+  }
+
+  removeFromAll(id);
+  if (type === 'room') rooms[group][idx].students.push(id);
+
+  render();
+}
+
+// ═══════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════
+let _toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => { t.style.display = 'none'; }, 3200);
+}
+
+// ═══════════════════════════════════════════════════════
+//  BORRADORES (localStorage)
+// ═══════════════════════════════════════════════════════
+const STORAGE_KEY = 'fdc_habitaciones_v1';
+
+function loadDraftsFromStorage() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+  catch { return []; }
+}
+
+function saveDraftsToStorage(drafts) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(drafts));
+}
+
+function saveDraft() {
+  const defaultName = `Borrador ${new Date().toLocaleDateString('es-ES', {day: '2-digit', month: '2-digit', year: 'numeric'})}`;
+  const name = prompt('Nombre del borrador:', defaultName);
+  if (name === null) return; // cancelado
+
+  const draft = {
+    id:    Date.now(),
+    name:  name.trim() || defaultName,
+    date:  new Date().toISOString(),
+    rooms: clone(rooms),
+  };
+
+  saveDraftsToStorage([draft, ...loadDraftsFromStorage()]);
+  showToast(`Borrador "${draft.name}" guardado.`);
+}
+
+function openModal() {
+  renderDraftList();
+  document.getElementById('overlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
+}
+
+function maybeCloseModal(e) {
+  if (e.target === document.getElementById('overlay')) closeModal();
+}
+
+function renderDraftList() {
+  const drafts = loadDraftsFromStorage();
+  const list   = document.getElementById('draft-list');
+
+  if (drafts.length === 0) {
+    list.innerHTML = '<div class="empty-state">No hay borradores guardados todavía.<br>Asigna alumnos y pulsa "Guardar".</div>';
+    return;
+  }
+
+  list.innerHTML = '';
+  drafts.forEach(draft => {
+    const total = ['girls', 'boys'].reduce((acc, g) =>
+      acc + draft.rooms[g].reduce((a, r) => a + r.students.length, 0), 0);
+
+    const item = document.createElement('div');
+    item.className = 'draft-item';
+    item.innerHTML =
+      `<div style="flex:1;min-width:0">` +
+        `<div class="draft-name">${escHtml(draft.name)}</div>` +
+        `<div class="draft-meta">${new Date(draft.date).toLocaleString('es-ES')} &nbsp;·&nbsp; ${total} asignados</div>` +
+      `</div>` +
+      `<button class="btn btn-primary btn-sm" onclick="loadDraft(${draft.id})">Cargar</button>` +
+      `<button class="btn btn-danger btn-sm" onclick="deleteDraft(${draft.id})">&#x2715;</button>`;
+
+    list.appendChild(item);
+  });
+}
+
+function loadDraft(id) {
+  const draft = loadDraftsFromStorage().find(d => d.id === id);
+  if (!draft) return;
+  if (!confirm(`¿Cargar "${draft.name}"?\nLos cambios actuales no guardados se perderán.`)) return;
+
+  rooms    = clone(draft.rooms);
+  selected = null;
+  closeModal();
+  render();
+  showToast(`Borrador "${draft.name}" cargado.`);
+}
+
+function deleteDraft(id) {
+  const draft = loadDraftsFromStorage().find(d => d.id === id);
+  if (!draft || !confirm(`¿Eliminar el borrador "${draft.name}"?`)) return;
+
+  saveDraftsToStorage(loadDraftsFromStorage().filter(d => d.id !== id));
+  renderDraftList();
+}
+
+function escHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// ═══════════════════════════════════════════════════════
+//  ARRANQUE
+// ═══════════════════════════════════════════════════════
+render();
+</script>
+</body>
+</html>
